@@ -1,0 +1,7 @@
+/dist
+/build
+/bin
+/test-lib
+/lib
+/package-res/resources/templates/
+*.project
