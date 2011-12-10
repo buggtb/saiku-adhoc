@@ -1,13 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="org/saiku/adhoc/model/test/ExampleResources.java|org/saiku/adhoc/reporting/generator/IReportGenerator.java|org/saiku/adhoc/reporting/generator/ReportGeneratorImpl.java|org/saiku/adhoc/reporting/model/WebModelCdaParameter.java|org/saiku/adhoc/reporting/model/WebModelDetailField.java|org/saiku/adhoc/reporting/model/WebModelElementFormat.java|org/saiku/adhoc/reporting/model/WebModelGroup.java|org/saiku/adhoc/reporting/model/WebModelLabel.java|org/saiku/adhoc/reporting/model/WebModelLength.java|org/saiku/adhoc/reporting/model/WebModelSorting.java|org/saiku/adhoc/reporting/model/WebWizardModelMapper.java|org/saiku/adhoc/reporting/model/WebWizardSpecification.java" kind="src" output="classes" path="src"/>
-	<classpathentry kind="var" path="JRE_LIB" sourcepath="JRE_SRC"/>
-	<classpathentry kind="con" path="org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER/?ivyXmlPath=ivy.xml&amp;confs=*&amp;ivySettingsPath=%24%7Bworkspace_loc%3Asaiku-adhoc%2Fivysettings.xml%7D&amp;loadSettingsOnDemand=false&amp;propertyFiles=%24%7Bworkspace_loc%3Asaiku-adhoc%2Fbuild.properties%7D"/>
-	<classpathentry kind="lib" path="dev-lib/cda-TRUNK-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="dev-lib/json-lib-2.3-jdk15.jar"/>
-	<classpathentry kind="lib" path="dev-lib/robochef-0.9.5.jar"/>
-	<classpathentry kind="lib" path="dev-lib/json_simple-1.1.jar"/>
-	<classpathentry kind="lib" path="dev-lib/pentaho-reporting-engine-classic-extensions-cda-3.8.0-GA.jar"/>
-	<classpathentry kind="lib" path="dev-lib/pentaho-reporting-engine-classic-extensions-cda-3.8-SNAPSHOT.jar"/>
-	<classpathentry kind="output" path="bin"/>
+	<classpathentry kind="src" output="target/classes" path="src/main/java"/>
+	<classpathentry excluding="**" kind="src" output="target/classes" path="src/main/resources"/>
+	<classpathentry excluding="**" kind="src" output="target/test-classes" path="src/test/resources"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5"/>
+	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER"/>
+	<classpathentry kind="output" path="target/classes"/>
 </classpath>
