@@ -8,7 +8,7 @@ var Report = Backbone.View.extend({
         this.workspace = args.workspace;
         
         // Bind table rendering to query result event
-        _.bindAll(this, "render", "process_data", "show_editor", "prevPage", "nextPage");
+        _.bindAll(this, "render", "process_data", "show_editor", "prevPage", "nextPage", "firstPage", "lastPage");
         
         this.workspace.bind('query:report', this.render);
                 
@@ -92,19 +92,17 @@ var Report = Backbone.View.extend({
     	this.workspace.query.page = acceptedPage;    
     	this.workspace.query.run(true);
     },    
-    
-    //TODO
+
     firstPage: function(args) {
     	var currPage = parseInt($(".report-navigator #curr_page").html());
-    	var acceptedPage = currPage > 1 ? currPage - 1 : 1; 	
+    	var acceptedPage = 1; 	
     	this.workspace.query.page = acceptedPage;    
     	this.workspace.query.run(true);
     },
-    
-    //TODO
+
     lastPage: function(args) {
-    	var currPage = parseInt($(".report-navigator #curr_page").html());
-    	var acceptedPage = currPage > 1 ? currPage - 1 : 1; 	
+    	var totalPages = this.json.pageCount;
+    	var acceptedPage = totalPages; 	
     	this.workspace.query.page = acceptedPage;    
     	this.workspace.query.run(true);
     },

@@ -25,6 +25,10 @@ package org.saiku.adhoc.model.master;
  */
 public class SaikuGroup {
 
+	public SaikuGroup() {
+		this.sort = "NONE";
+	}
+
 	private String dataFormat;
 
 	private String displayName;
@@ -34,6 +38,8 @@ public class SaikuGroup {
 	private String columnId;
 
 	private String columnName;
+	
+	private String sort;
 
 	private String groupName;
 
@@ -110,6 +116,14 @@ public class SaikuGroup {
 		return "SaikuGroup [dataFormat=" + dataFormat + ", displayName="
 				+ displayName + ", columnId=" + columnId + ", columnName="
 				+ columnName + ", uid=" + uid + "]";
+	}
+
+	public void setSort(String sort) {
+		this.sort = sort;
+	}
+
+	public String getSort() {
+		return sort;
 	}
 
 }

@@ -38,6 +38,10 @@ html, body {
 	background-repeat: no-repeat;
 }
 
+.report-hover{
+	border: 1px dotted #000 !important; 
+}
+
 /** Header */
 #header {
     background: #F0F0F0;
@@ -65,6 +69,12 @@ html, body {
     float: right;
     text-align: right;
     width: 40%;
+}
+
+.filetree .highlighted{
+	font-weight: bold;
+	color: #2A6085;
+	/*background: #DDDDDD*/
 }
 
 #contents thead ,.report-navigator{
@@ -622,6 +632,11 @@ textarea.formula{
 .workspace_inner {
     margin-left: 265px;
     /*overflow: auto;*/
+}
+
+#container_id{
+	overflow: auto;
+    height: 200px;
 }
 
 /** Field List */

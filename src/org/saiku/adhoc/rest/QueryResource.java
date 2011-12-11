@@ -51,6 +51,7 @@ import org.saiku.adhoc.model.dto.FilterValue;
 import org.saiku.adhoc.model.dto.HtmlReport;
 import org.saiku.adhoc.model.dto.Position;
 import org.saiku.adhoc.model.dto.SavedQuery;
+import org.saiku.adhoc.model.dto.SolutionFileInfo;
 import org.saiku.adhoc.model.master.SaikuColumn;
 import org.saiku.adhoc.model.master.SaikuElementFormat;
 import org.saiku.adhoc.model.metadata.impl.MetadataModelInfo;
@@ -522,7 +523,7 @@ public class QueryResource extends PentahoBase {
 	@POST
 	@Consumes({ "application/json" })
 	@Path("/{queryname}/COLUMNS/CATEGORY/{category}/COLUMN/{column}/POSITION/{position}/SORT/{order}")
-	public Status setSort(
+	public Status setColumnSort(
 			@PathParam("queryname") String sessionId,
 			@PathParam("category") String category,
 			@PathParam("column") String column,
@@ -544,7 +545,32 @@ public class QueryResource extends PentahoBase {
 		}
 
 	}
-	
+
+	@POST
+	@Consumes({ "application/json" })
+	@Path("/{queryname}/GROUP/CATEGORY/{category}/COLUMN/{column}/POSITION/{position}/SORT/{order}")
+	public Status setGroupSort(
+			@PathParam("queryname") String sessionId,
+			@PathParam("category") String category,
+			@PathParam("column") String column,
+			@PathParam("position") Integer position,
+			@PathParam("order") String order) {
+		
+		if (log.isDebugEnabled()) {
+			log.debug("REST:POST " + sessionId + " sort position=" + position
+					+ " category=" + category + " column=" + column);
+		}
+
+		try {
+			editorService.setGroupSort(sessionId, category, column, position, order);
+			return Status.OK;
+		} catch (Exception e) {
+			e.printStackTrace();
+			
+			return Status.INTERNAL_SERVER_ERROR;
+		}
+
+	}
 
 	@Override
 	public Log getLogger() {
@@ -600,6 +626,36 @@ public class QueryResource extends PentahoBase {
 			return Status.INTERNAL_SERVER_ERROR;
 		}
 	}
+
+	@POST
+	@Path("/{queryname}/EXPORT/PRPT")
+	public Status exportPrpt(
+			SolutionFileInfo file,
+			@PathParam("queryname") String sessionId) {
+		
+		try {
+			reportGeneratorService.savePrpt(sessionId, file.getPath(),file.getFile());
+			return Status.OK;
+		} catch (Exception e) {
+			
+			return Status.INTERNAL_SERVER_ERROR;
+		}
+	}
 	
+	@POST
+	@Path("/{queryname}/EXPORT/CDA")
+	public Status exportCda(
+			SolutionFileInfo file,
+			@PathParam("queryname") String sessionId) {
+		
+		try {
+			reportGeneratorService.saveCda(sessionId, file.getPath(),file.getFile());
+			
+			return Status.OK;
+		} catch (Exception e) {
+			
+			return Status.INTERNAL_SERVER_ERROR;
+		}
+	}
 
 }

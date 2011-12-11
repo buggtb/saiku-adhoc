@@ -1,6 +1,7 @@
 var Session = Backbone.Model.extend({
 
     initialize: function() {
+
         // Attach a custom event bus to this model
         _.extend(this, Backbone.Events);
         _.bindAll(this, "process_session","templates_callback", "prefetch_md_models");

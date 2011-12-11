@@ -21,10 +21,17 @@
 package org.saiku.adhoc.service;
 
 import java.io.OutputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.pentaho.platform.api.engine.IParameterProvider;
+import org.pentaho.platform.api.repository.IContentItem;
 import org.pentaho.platform.engine.services.solution.SimpleContentGenerator;
+import org.saiku.adhoc.service.repository.FileExplorer;
+
+
 
 /**
  * @author mgiepz
@@ -34,8 +41,8 @@ public class SaikuAdhocContentGenerator extends SimpleContentGenerator {
 
 	private static final long serialVersionUID = -9180003935693305152L;
 	private static final Log logger = LogFactory
-			.getLog(SaikuAdhocContentGenerator.class);
-	
+	.getLog(SaikuAdhocContentGenerator.class);
+
 	public String getMimeType() {
 		return "text/html";
 	}
@@ -46,8 +53,65 @@ public class SaikuAdhocContentGenerator extends SimpleContentGenerator {
 
 	@Override
 	public void createContent(OutputStream out) throws Exception {
+		{
 
+			final IParameterProvider pathParams = parameterProviders.get("path");
+			final IParameterProvider requestParams = parameterProviders.get("request");
+
+			try
+			{
+
+				final Class[] params =
+				{
+						IParameterProvider.class, OutputStream.class
+				};
+
+				final String method = pathParams.getStringParameter("path", null).split("/")[1].toLowerCase();
+
+				try
+				{
+					final Method mthd = this.getClass().getMethod(method, params);
+					mthd.invoke(this, requestParams, out);
+				}
+				catch (NoSuchMethodException e)
+				{
+					logger.error("could not invoke " + method);
+				}
+				catch (InvocationTargetException e)
+				{
+					//get to the cause and rethrow properly
+					Throwable target = e.getTargetException();
+					if (!e.equals(target))
+					{//just in case
+						//get to the real cause
+						while (target != null && target instanceof InvocationTargetException)
+						{
+							target = ((InvocationTargetException) target).getTargetException();
+						}
+					}
+					if (target instanceof Exception)
+					{
+						throw (Exception) target;
+					}
+					else
+					{
+						throw new Exception(target);
+					}
+				}
+			}
+			catch (Exception e)
+			{
+				final String message = e.getCause() != null ? e.getCause().getClass().getName() + " - " + e.getCause().getMessage() : e.getClass().getName() + " - " + e.getMessage();
+				logger.error(message, e);
+			}
+		}
 	}
 
+	public void explorefolder(final IParameterProvider pathParams, final OutputStream out)
+	{
+		final String folder = pathParams.getStringParameter("dir", null);
+		final String fileExtensions = pathParams.getStringParameter("fileExtensions", null);
+		FileExplorer.getInstance().browse(folder, fileExtensions, userSession, out);
+	}
 
 }

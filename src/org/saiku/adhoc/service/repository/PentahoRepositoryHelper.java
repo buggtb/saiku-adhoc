@@ -29,22 +29,26 @@ import java.util.ArrayList;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.dom4j.Document;
 import org.pentaho.metadata.model.Domain;
 import org.pentaho.platform.api.engine.IFileFilter;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.ISolutionFile;
+import org.pentaho.platform.api.engine.ISolutionFilter;
 import org.pentaho.platform.api.engine.PentahoAccessControlException;
 import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.solution.ActionInfo;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.util.messages.LocaleHelper;
-import org.saiku.adhoc.model.dto.Directory;
 import org.saiku.adhoc.model.dto.FileTree;
 import org.saiku.adhoc.model.master.ReportTemplate;
 import org.saiku.adhoc.service.PluginConfig;
 
+
 public class PentahoRepositoryHelper implements IRepositoryHelper {
+	
+	private static final String path = "saiku-adhoc/temp";
 
 	private static Log log = LogFactory.getLog(PentahoRepositoryHelper.class);
 
@@ -79,7 +83,7 @@ public class PentahoRepositoryHelper implements IRepositoryHelper {
 
 	@Override
 	public String loadFile(String solution, String path, String action)
-			throws IOException {
+	throws IOException {
 
 		// do we need to load other files too?
 		if (!action.endsWith(".adhoc")) {
@@ -98,7 +102,7 @@ public class PentahoRepositoryHelper implements IRepositoryHelper {
 			if (doc == null) {
 				log.error("Error retrieving document from solution repository");
 				throw new NullPointerException(
-						"Error retrieving document from solution repository");
+				"Error retrieving document from solution repository");
 			}
 
 			return doc;
@@ -109,11 +113,11 @@ public class PentahoRepositoryHelper implements IRepositoryHelper {
 
 	private static boolean writeFile(String solution, String path,
 			String artifact, byte[] contents)
-			throws PentahoAccessControlException, UnsupportedEncodingException,
-			Exception {
+	throws PentahoAccessControlException, UnsupportedEncodingException,
+	Exception {
 
 		String fullPath = ActionInfo
-				.buildSolutionPath(solution, path, artifact);
+		.buildSolutionPath(solution, path, artifact);
 		IPentahoSession userSession = PentahoSessionHolder.getSession();
 		ISolutionRepository repository = PentahoSystem.get(
 				ISolutionRepository.class, userSession);
@@ -124,7 +128,7 @@ public class PentahoRepositoryHelper implements IRepositoryHelper {
 		}
 
 		String base = PentahoSystem.getApplicationContext()
-				.getSolutionRootPath();
+		.getSolutionRootPath();
 		String parentPath = ActionInfo.buildSolutionPath(solution, path, "");
 		ISolutionFile parentFile = repository.getSolutionFile(parentPath,
 				ISolutionRepository.ACTION_CREATE);
@@ -135,12 +139,12 @@ public class PentahoRepositoryHelper implements IRepositoryHelper {
 		if (fileToSave != null
 				|| (!repository.resourceExists(filePath) && parentFile != null)) {
 			repository
-					.publish(base, '/' + parentPath, artifact, contents, true);
+			.publish(base, '/' + parentPath, artifact, contents, true);
 			log.debug(PluginConfig.PLUGIN_NAME + " : Published " + solution
 					+ " / " + path + " / " + artifact);
 		} else {
 			throw new Exception(
-					"Error ocurred while saving to solution repository");
+			"Error ocurred while saving to solution repository");
 		}
 		return (true);
 	}
@@ -179,71 +183,70 @@ public class PentahoRepositoryHelper implements IRepositoryHelper {
 		}
 	}
 
+	private class DirectoryFilter implements ISolutionFilter
+	{
+
+		public boolean keepFile(final ISolutionFile iSolutionFile, final int i)
+		{
+			if (iSolutionFile.isDirectory())
+			{
+				return true;
+			}
+			return false;
+		}
+	}
+
 	/**
 	 * Browse the content of the repository
 	 * 
 	 * @param dir
 	 * @param fileExtensions
 	 */
-	public FileTree browse(String dir, final String fileExtensions) {
+	/*
+	public Document browse(String dir, final String fileExtensions) {
 
 		IPentahoSession userSession = PentahoSessionHolder.getSession();
 
 		FileTree tree = new FileTree();
 
-		try {
-			if (dir == null) {
-				return null;
-			}
-			final ISolutionRepository solutionRepository = PentahoSystem.get(
-					ISolutionRepository.class, userSession);
+		final ISolutionRepository solutionRepository = PentahoSystem.get(ISolutionRepository.class, userSession);
 
-			ISolutionFile[] files = solutionRepository.getFileByPath(dir)
-					.listFiles(new IFileFilter() {
-						public boolean accept(ISolutionFile file) {
-							boolean hasAccess = solutionRepository.hasAccess(
-									file, ISolutionRepository.ACTION_CREATE);
-							String visiblePtoperty = solutionRepository
-									.getLocalizedFileProperty(file, "visible");
-							boolean visible = !file.isDirectory()
-									|| (visiblePtoperty != null && visiblePtoperty
-											.equals("true"));
-							return visible && hasAccess ? !file.isDirectory()
-									&& fileExtensions.length() > 0 ? fileExtensions
-									.indexOf(file.getExtension()) != -1 : true
-									: false;
-						}
-					});
+		Document dirTree = solutionRepository.getFullSolutionTree(ISolutionRepository.ACTION_EXECUTE, new DirectoryFilter());
 
-			Directory lastDir = null;
+		return dirTree;
 
-			if (files.length > 0) {
-				for (ISolutionFile file : files) {
-					if (file.isDirectory()) {
-						final Directory directory = new Directory(
-								file.getFileName());
-						lastDir = directory;
-						tree.getDirectories().add(directory);
-					}
-				}
+	}
+	*/
 
-				for (ISolutionFile file : files) {
-					if (!file.isDirectory()) {
-						int dotIndex = file.getFileName().lastIndexOf('.');
-						String ext = dotIndex > 0 ? file.getFileName()
-								.substring(dotIndex + 1) : "";
-						lastDir.getFiles().add(
-								new org.saiku.adhoc.model.dto.File(file
-										.getFileName(), ext));
-					}
-				}
+	@Override
+	public void cleanTemp() {
 
-			}
-		} catch (Exception e) {
-			// TODO: handle exception
+		IPentahoSession userSession = PentahoSessionHolder.getSession();
+		
+		final ISolutionRepository solutionRepository = PentahoSystem.get(ISolutionRepository.class, userSession);
+
+		final String fileExtensions = "cda";
+		
+		ISolutionFile[] files =  solutionRepository.getFileByPath(this.path).listFiles(new IFileFilter(){
+			public boolean accept(ISolutionFile file) {
+				boolean hasAccess = solutionRepository.hasAccess(file,ISolutionRepository.ACTION_DELETE);
+				boolean visible = !file.isDirectory();
+				return visible  && hasAccess ? !file.isDirectory() && fileExtensions.length() > 0 ? fileExtensions.indexOf(file.getExtension()) != -1 : true : false;
+			}				
+		});
+		
+		for (int i = 0; i < files.length; i++) {
+			ISolutionFile iSolutionFile = files[i];
+			solutionRepository.removeSolutionFile(iSolutionFile.getFullPath());
+			
 		}
-		return tree;
 
+	}
+
+	@Override
+	public Document browse(String dir, String fileExtensions) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

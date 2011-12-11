@@ -89,25 +89,14 @@ public class SaikuColumn {
 		String defAggType = logicalColumn.getAggregationType().name()!=null?
 				logicalColumn.getAggregationType().name(): none;
 					
-		this.defaultAggType = defAggType;
-		
-		final String locale = "en_En";
-		
-		this.description = logicalColumn.getDescription(locale);
-		
-	//die properties müssen vom parent concept geholt werden
-		
+		this.defaultAggType = defAggType;		
+		final String locale = "en_En";	
+		this.description = logicalColumn.getDescription(locale);	
 		this.name = logicalColumn.getName(locale);
-
-		//formatierung hier ausrollen
-		this.columnFormat = new SaikuElementFormat();
-		//this.elementFormat.setBackgroudColor(backgroudColor)
-		
-		
-		this.fieldType = logicalColumn.getDataType().getName();
-		
+		this.columnFormat = new SaikuElementFormat();		
+		this.columnHeaderFormat = new SaikuElementFormat();		
+		this.fieldType = logicalColumn.getDataType().getName();		
 		this.forGroupOnly = false;
-
 		this.sort = "NONE";
 		
 	}

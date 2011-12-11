@@ -26,6 +26,7 @@ import org.apache.commons.logging.LogFactory;
 import org.pentaho.reporting.engine.classic.core.AttributeNames;
 import org.pentaho.reporting.engine.classic.core.ReportElement;
 import org.saiku.adhoc.model.master.SaikuColumn;
+import org.saiku.adhoc.utils.TemplateUtils;
 
 public class SaikuUpdateDetailsHeaderTask implements UpdateTask {
 	
@@ -42,10 +43,22 @@ public class SaikuUpdateDetailsHeaderTask implements UpdateTask {
 	public void processElement(ReportElement e, int index) {
 
 		log.debug(e.getClass() + " " + e.getName());
-
+		
+		/*
+		 * Markup for Client
+		 */
+		final SaikuColumn saikuColumn = columns.get(index);
+		
 		final String htmlClass = "saiku " + columns.get(index).getUid().replace("rpt-dtl-", "rpt-dth-");;
 		
 		e.setAttribute(AttributeNames.Html.NAMESPACE, AttributeNames.Html.STYLE_CLASS, htmlClass);
+	
+		e.setAttribute("http://reporting.pentaho.org/namespaces/engine/attributes/wizard", "allow-metadata-styling", Boolean.FALSE);
+
+		/*
+		 * Transfer element style
+		 */	
+		TemplateUtils.mergeElementFormats(e.getStyle(), saikuColumn.getColumnHeaderFormat());
 
 	}
 

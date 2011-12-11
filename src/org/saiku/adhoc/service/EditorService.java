@@ -336,7 +336,7 @@ public class EditorService {
 		}else if(id.contains("dth")){
 			final List<SaikuColumn> columns = model.getColumns();			
 			for (SaikuColumn saikuColumn : columns) {
-				if(id.equals(saikuColumn.getUid())){
+				if(id.replace("dth", "dtl").equals(saikuColumn.getUid())){
 					return new ElementFormat(
 							saikuColumn.getColumnHeaderFormat(),saikuColumn.getName());
 				}
@@ -394,7 +394,7 @@ public class EditorService {
 		}else if(id.contains("dth")){
 			final List<SaikuColumn> columns = model.getColumns();			
 			for (SaikuColumn saikuColumn : columns) {
-				if(id.equals(saikuColumn.getUid())){
+				if(id.replace("dth", "dtl").equals(saikuColumn.getUid())){
 					saikuColumn.setColumnHeaderFormat(format.getFormat());
 					saikuColumn.setName(format.getValue());
 
@@ -445,11 +445,14 @@ public class EditorService {
 	
 	public void setColumnSort(String sessionId, String category, String column,
 			Integer position, String order) {
-
 		sessionHolder.getModel(sessionId).getColumns().get(position).setSort(order);
-		
 	}
 
+	public void setGroupSort(String sessionId, String category, String column,
+			Integer position, String order) {
+		sessionHolder.getModel(sessionId).getGroups().get(position).setSort(order);
+	}
+	
 	public void setMetadataService(IMetadataService metadataService) {
 		this.metadataService = metadataService;
 	}

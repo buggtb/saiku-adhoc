@@ -47,4 +47,6 @@
 	<!--content-generator id="querybuilderui" title="Query-Builder" type="qbi" class="org.saiku.adhoc.service.AdocReportingContentGenerator" /-->
 	<content-generator id="saiku-adhoc" title="fa la la la la, la la la la" type="notused" class="org.saiku.adhoc.service.ServletAdapterContentGenerator"/>
 
+<lifecycle-listener class="org.saiku.adhoc.utils.AdhocLifecycleListener"/>
+
 </plugin>

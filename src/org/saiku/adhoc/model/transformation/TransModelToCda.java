@@ -184,9 +184,6 @@ public class TransModelToCda {
 				cdaColumns.add(columnDef);
 			}
 		}
-		
-		//add the calculated columns
-		
 
 		return cdaColumns;
 	}

@@ -21,7 +21,6 @@ var SavedQuery = Backbone.Model.extend({
     }
 });
 
-
 /**
  * Repository adapter
  */

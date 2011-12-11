@@ -18,14 +18,13 @@
 		<link rel="stylesheet" type="text/css" href="js/jquery/colorpicker/css/colorpicker.css" />
 		<link rel="stylesheet" type="text/css" href="js/jquery/colorpicker/css/saiku.css" />
         <link rel="stylesheet" type="text/css" href="js/jquery/treeview/jquery.treeview.css" />
+
              
         <!-- Saiku CSS -->
         <link rel="stylesheet" href="css/saiku/src/styles.css" type="text/css">
         <link rel="stylesheet" href="css/saiku/src/editor.css" type="text/css">
 
-
-
-		<link rel="stylesheet" href="js/jquery/jquery-formbuilder-0.1.css" type="text/css">
+        <link rel="stylesheet" href="css/saiku/src/jqueryFiletree.css" type="text/css">
 
         <link rel="shortcut icon" href="favicon.ico">
 		
@@ -67,6 +66,8 @@
 		<script type="text/javascript" src="js/jquery/Fontpicker.js"></script>
 		<script type="text/javascript" src="js/jquery/colorpicker/js/colorpicker.js"></script>
 		<script type="text/javascript" src="js/jquery/treeview/jquery.treeview.js"></script>
+
+		<script type="text/javascript" src="js/jquery/jqueryFiletree.js"></script>
 		
 		<script src="js/backbone/backbone.js"></script>
 
@@ -79,7 +80,7 @@
 		<script src="js/adhoc/models/ReportResult.js"></script>
 		<script src="js/adhoc/models/InplaceEdit.js"></script>
 		<script src="js/adhoc/models/Repository.js"></script>
-		<script src="js/adhoc/models/FileTree.js"></script>
+		<!--script src="js/adhoc/models/FileTree.js"></script-->
 		<script src="js/adhoc/views/Workspace.js"></script>
 		<script src="js/adhoc/views/WorkspaceDropZone.js"></script>
 		<script src="js/adhoc/views/ElementFormatPanel.js"></script>
@@ -218,8 +219,11 @@
 		</script>
 		
 		<script type="text/x-jquery-tmpl" id="template-workspace-toolbar">
-        <ul>
-            <li><a href="#save_query" 
+        <ul> 
+        	<li><a href="#toggle_report" 
+                class="i18n report button sprite" 
+                title="Report Designer"></a></li>
+            <li class="seperator"	><a href="#save_query" 
                 class="i18n save button disabled_toolbar sprite" 
                 title="Save query"></a></li>
             <li class="seperator"><a href="#run_query" 
@@ -249,9 +253,6 @@
             <li><a href="#export_csv" 
                 class="i18n export_csv button  sprite" 
                 title="Export CSV"></a></li>
-            <li class="seperator"><a href="#toggle_report" 
-                class="i18n report button sprite" 
-                title="Report Designer"></a></li>
             <li><a href="#export_csv" 
                 class="i18n xls_form button sprite" 
                 title="Excel Forms"></a></li>

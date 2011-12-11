@@ -13,8 +13,6 @@ var WorkspaceDropZone = Backbone.View.extend({
         'click span.sort': 'sort'
     },
     
-    
-    
     initialize: function(args) {
         // Keep track of parent workspace
         this.workspace = args.workspace;
@@ -88,7 +86,14 @@ var WorkspaceDropZone = Backbone.View.extend({
         var index = ui.item.parent('.connectable').children().index(ui.item);
         
         //ui.item.attr('id', _.uniqueId('col'));
-        ui.item.attr('id', this.workspace.uniqueId('rpt-dtl-'));
+        
+        //
+        if(ui.item.parents('.fields_list').attr('title')=='COLUMNS'){
+        	ui.item.attr('id', this.workspace.uniqueId('rpt-dtl-'));
+        }else if(ui.item.parents('.fields_list').attr('title')=='GROUPS'){
+        	ui.item.attr('id', this.workspace.uniqueId('rpt-grp-'));
+        }
+        
 
         this.workspace.query.move_dimension(dimension, 
                 $(event.target).parent(), index);
@@ -103,8 +108,13 @@ var WorkspaceDropZone = Backbone.View.extend({
         var index = ui.item.parent('.connectable').children().index(ui.item);
         if (! ui.item.hasClass('deleted')) {
             this.workspace.query.move_dimension(dimension, 
-                $(event.target).parent(), index);
+                //$(event.target).parent()
+                ui.item.parents('.fields_list_body')
+                , index);
         }
+        
+        
+        
         
         // Prevent workspace from getting this event
         event.stopPropagation();
@@ -156,9 +166,7 @@ var WorkspaceDropZone = Backbone.View.extend({
     },
     
     sort: function(event, ui) {
-        // Determine dimension
-       
-        
+
         var $target = $(event.target).parent().find('.dimension');
             
         var key = $target.attr('href').replace('#', '');
@@ -166,10 +174,11 @@ var WorkspaceDropZone = Backbone.View.extend({
         var $li = $target.parent('.ui-draggable');
         var index = $li.parent('.connectable').children().index($li);
 
+        if ($li.parent('.connectable').parent().hasClass('columns')) target = "COLUMNS";
+        if ($li.parent('.connectable').parent().hasClass('group')) target = "GROUP";
+
  		$(event.target).cycleClass(["none","up","down"]);
- 		
- 		//alert(key);
- 		
+
  		var order = "NONE";	
  		
  		if($(event.target).hasClass("up")){
@@ -179,7 +188,7 @@ var WorkspaceDropZone = Backbone.View.extend({
  			order = "DESC";
  		}
 
- 		this.workspace.query.action.post("/COLUMNS/" + key + "/POSITION/" + index + "/SORT/" + order , { 
+ 		this.workspace.query.action.post("/" + target + "/" + key + "/POSITION/" + index + "/SORT/" + order , { 
             success: this.workspace.query.run
         });
     

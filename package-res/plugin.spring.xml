@@ -88,14 +88,12 @@
 	<!--bean id="editResource" class="org.saiku.adhoc.rest.EditResource"> <property 
 		name="editorService" ref="editorService" /> </bean -->
 
-	<bean id="tempClean" class="org.saiku.adhoc.utils.TempCleanerTask">
+	<!--bean id="tempClean" class="org.saiku.adhoc.utils.TempCleanerTask">
 		<property name="repositoryHelper" ref="repositoryHelper" />
 	</bean>
 
 	<bean id="scheduledTask" class="org.springframework.scheduling.timer.ScheduledTimerTask">
-		<!-- wait 10 seconds before starting repeated execution -->
 		<property name="delay" value="10000" />
-		<!-- run every 50 seconds -->
 		<property name="period" value="50000" />
 		<property name="timerTask" ref="tempClean" />
 	</bean>
@@ -103,11 +101,10 @@
 	<bean id="timerFactory" class="org.springframework.scheduling.timer.TimerFactoryBean">
 		<property name="scheduledTimerTasks">
 			<list>
-				<!-- see the example above -->
 				<ref bean="scheduledTask" />
 			</list>
 		</property>
-	</bean>
+	</bean-->
 
 </beans>
 

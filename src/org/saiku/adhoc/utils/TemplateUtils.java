@@ -19,13 +19,12 @@
  */
 package org.saiku.adhoc.utils;
 import java.awt.Color;
+
 import org.pentaho.reporting.engine.classic.core.ElementAlignment;
 import org.pentaho.reporting.engine.classic.core.style.ElementStyleKeys;
 import org.pentaho.reporting.engine.classic.core.style.ElementStyleSheet;
-import org.pentaho.reporting.engine.classic.core.style.FontDefinition;
 import org.pentaho.reporting.engine.classic.core.style.TextStyleKeys;
 import org.pentaho.reporting.engine.classic.core.style.VerticalTextAlign;
-import org.pentaho.reporting.engine.classic.core.util.beans.ElementAlignmentValueConverter;
 import org.saiku.adhoc.exceptions.ReportException;
 import org.saiku.adhoc.model.master.SaikuElementFormat;
 
@@ -92,7 +91,7 @@ public class TemplateUtils {
 	 */
 	private static Color strToColor(String str) {
 		if(str!=null){
-		return Color.decode(str.replace("#", "0x"));
+		return Color.decode(str.replaceFirst("#", "0x"));
 		}else{
 			return null;
 		}
@@ -102,7 +101,7 @@ public class TemplateUtils {
 		if(color!=null){
 		int colInt = color.getRGB();
 		String str = Integer.toHexString(colInt);
-		return str.replace("ff", "#");
+		return str.replaceFirst("ff", "#");
 		}else{
 			return null;
 		}
@@ -204,7 +203,7 @@ public class TemplateUtils {
 			prptFormat.setStyleProperty(
 					TextStyleKeys.FONT,saikuFormat.getFontName());
 		}
-
+		
 		if(saikuFormat.getHorizontalAlignment()==null){
 			final ElementAlignment horz = (ElementAlignment) prptFormat.getStyleProperty(
 					ElementStyleKeys.ALIGNMENT, null);
@@ -214,6 +213,17 @@ public class TemplateUtils {
 					ElementStyleKeys.ALIGNMENT, saikuToPrptAlignment(saikuFormat.getHorizontalAlignment()));
 		}
 
+		/*
+		if(saikuFormat.getHorizontalAlignment()==null){
+			final String horz = (String) prptFormat.getStyleProperty(
+					ElementStyleKeys.ALIGNMENT, null);
+			saikuFormat.setHorizontalAlignment(horz);
+		}else{
+			prptFormat.setStyleProperty(
+					ElementStyleKeys.ALIGNMENT, saikuFormat.getHorizontalAlignment());
+		}
+		*/
+		
 		if(saikuFormat.getVerticalAlignment()==null){
 			final String vert = ((VerticalTextAlign) prptFormat.getStyleProperty(
 					TextStyleKeys.VERTICAL_TEXT_ALIGNMENT, null)).toString();

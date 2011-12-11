@@ -22,6 +22,7 @@ package org.saiku.adhoc.service.repository;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import org.dom4j.Document;
 import org.pentaho.metadata.model.Domain;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.saiku.adhoc.model.dto.FileTree;
@@ -41,6 +42,8 @@ public interface IRepositoryHelper {
 
 	public abstract String loadFile(String solution, String path, String action) throws IOException;
 
-	public abstract FileTree browse(String dir, String fileExtensions);
+	public abstract Document browse(String dir, String fileExtensions);
+
+	public abstract void cleanTemp();
 
 }

@@ -31,6 +31,7 @@ import javax.ws.rs.core.Response.Status;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
+import org.dom4j.Document;
 import org.saiku.adhoc.model.WorkspaceSessionHolder;
 import org.saiku.adhoc.model.dto.FileTree;
 import org.saiku.adhoc.model.dto.SavedQuery;
@@ -117,6 +118,7 @@ public class PentahoRepositoryResource {
 
 	}
 
+	/*
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/browse/{dir}/{extensions}")
@@ -124,7 +126,10 @@ public class PentahoRepositoryResource {
 			@PathParam("dir") String dir,
 			@PathParam("extensions") String fileExtensions
 	){
-		return repository.browse(dir, fileExtensions);
+		final Document browse = repository.browse(dir, fileExtensions);
+		return new FileTree(browse.asXML());
+
 	}
+*/
 
 }

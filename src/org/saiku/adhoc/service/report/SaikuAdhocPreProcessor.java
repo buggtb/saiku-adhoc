@@ -52,7 +52,6 @@ import org.pentaho.reporting.engine.classic.core.filter.types.LabelType;
 import org.pentaho.reporting.engine.classic.core.filter.types.MessageType;
 import org.pentaho.reporting.engine.classic.core.filter.types.NumberFieldType;
 import org.pentaho.reporting.engine.classic.core.filter.types.TextFieldType;
-import org.pentaho.reporting.engine.classic.core.function.CountDistinctFunction;
 import org.pentaho.reporting.engine.classic.core.function.ProcessingContext;
 import org.pentaho.reporting.engine.classic.core.function.StructureFunction;
 import org.pentaho.reporting.engine.classic.core.metadata.ElementType;
@@ -81,7 +80,7 @@ import org.saiku.adhoc.model.master.SaikuMasterModel;
 import org.saiku.adhoc.service.report.tasks.SaikuUpdateDetailsHeaderTask;
 import org.saiku.adhoc.service.report.tasks.SaikuUpdateDetailsTask;
 import org.saiku.adhoc.service.report.tasks.SaikuUpdateFooterTask;
-import org.saiku.adhoc.service.report.tasks.SaikuUpdateHeaderTask;
+import org.saiku.adhoc.service.report.tasks.SaikuUpdateGroupHeaderTask;
 import org.saiku.adhoc.service.report.tasks.SaikuUpdateMessagesTask;
 import org.saiku.adhoc.service.report.tasks.UpdateTask;
 
@@ -399,22 +398,25 @@ public class SaikuAdhocPreProcessor implements ReportPreProcessor {
 			setupDefaultGrid(detailsHeader, headerElement);
 			headerElement.getStyle().setStyleProperty(
 					ElementStyleKeys.MIN_WIDTH, new Float(width));
+			/*
 			if (Boolean.TRUE.equals(headerElement.getAttribute(
 					AttributeNames.Wizard.NAMESPACE,
 					AttributeNames.Wizard.ALLOW_METADATA_STYLING))) {
 				headerElement.setAttribute(AttributeNames.Wizard.NAMESPACE,
 						"CachedWizardFormatData", field);
 			}
+			*/
 			if (Boolean.TRUE.equals(headerElement.getAttribute(
 					AttributeNames.Wizard.NAMESPACE,
 					AttributeNames.Wizard.ALLOW_METADATA_ATTRIBUTES))) {
 				headerElement.setAttribute(AttributeNames.Wizard.NAMESPACE,
 						"CachedWizardFieldData", field);
 			}
+			/*
 			headerElement.setAttribute(AttributeNames.Wizard.NAMESPACE,
 					MetaAttributeNames.Style.HORIZONTAL_ALIGNMENT,
 					field.getHorizontalAlignment());
-
+			 */
 			detailsHeader.addElement(headerElement);
 		}
 
@@ -833,7 +835,7 @@ public class SaikuAdhocPreProcessor implements ReportPreProcessor {
 
 		this.definition = definition;
 
-		// setupRelationalGroups();
+		setupRelationalGroups();
 		setupDetails();
 		
 		setupReportHeader();
@@ -923,14 +925,28 @@ public class SaikuAdhocPreProcessor implements ReportPreProcessor {
 		final List<SaikuGroup> groupDefinitions = model.getGroups();
 
 		log.debug("setting up relational group!");
+		
 
 		for (SaikuGroup saikuGroup : groupDefinitions) {
 			int groupIndex = groupDefinitions.indexOf(saikuGroup);
 			Group group = definition.getGroup(groupIndex);
-			iterateSection(group, new SaikuUpdateHeaderTask(saikuGroup));
+			configureSaikuGroupHeader(group, saikuGroup, groupIndex);
+			configureSaikuGroupFooter(group, saikuGroup, groupIndex);
+			//iterateSection(group, new SaikuUpdateGroupTask(saikuGroup));
 			// iterateSection(saikuGroup, new UpdateFooterTask(gd));
 		}
 
+	}
+
+	private void configureSaikuGroupFooter(Group group, SaikuGroup saikuGroup,
+			int groupIndex) {
+		//iterateSection(group, new SaikuUpdateGroupFooterTask(saikuGroup));	
+		
+	}
+
+	private void configureSaikuGroupHeader(Group group, SaikuGroup saikuGroup,
+			int groupIndex) {
+		iterateSection(group, new SaikuUpdateGroupHeaderTask(saikuGroup,groupIndex));	
 	}
 
 	/**

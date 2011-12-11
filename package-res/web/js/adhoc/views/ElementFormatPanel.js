@@ -101,6 +101,8 @@ var ElementFormatPanel = Backbone.View.extend({
 		//TODO: move to a template
 	 	var $fontSize = $(this.el).find('.sizeSelector')
 	 	.append('&nbsp;<select> \
+	 		<option value="6">6</option> \
+		    <option value="8">8</option> \
 		    <option value="9">9</option> \
 		    <option value="10">10</option> \
 		    <option value="11">11</option> \
@@ -141,23 +143,25 @@ var ElementFormatPanel = Backbone.View.extend({
 				return that.json.value;
 			}
 		};
-		
 
-        //TODO: Details should not be click-editable!!!
-    	$('.adhoc-highlight').editInPlace({
-    		callback: function(unused, enteredText) { 
-    			//save the value to the server
-    			that.json.value = enteredText;
-    			that.save(that.json);
-    			return true;
-    			},
-			delegate: inplaceEditDelegate,
-    		show_buttons: true,
-    		default_text: function(){return that.json.value;},
-    		select_text: function(){return that.json.value;},
-    		select_options: "selected:disabled"
-    	});    	
-
+    	$('.adhoc-highlight').each(function(){
+    		//Details should not be click-editable
+    		if(!($(this).attr('class').indexOf('rpt-dtl') > -1)){ 		
+    			$(this).editInPlace({
+    				callback: function(unused, enteredText) { 
+    					//save the value to the server
+    					that.json.value = enteredText;
+    					that.save(that.json);
+    					return true;
+    				},
+					delegate: inplaceEditDelegate,
+    				show_buttons: true,
+    		 		default_text: function(){return that.json.value;},
+    				select_text: function(){return that.json.value;},
+    				select_options: "selected:disabled"
+    			});    
+    		}	
+    	});
     },
     
     fetch_values: function(element, type) {

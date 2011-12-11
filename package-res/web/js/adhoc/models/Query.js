@@ -69,7 +69,7 @@ var Query = Backbone.Model.extend({
                 $target_el.find('a[href="#' + dimension + '"]').parent() );
         
         var url = "/" + target + "/" + dimension + "/POSITION/" + index;
-      
+
        // var $element = $target_el.find('li.ui-draggable');
         
         var uid = $target_el.find('a[href="#' + dimension + '"]').parent().attr('id');

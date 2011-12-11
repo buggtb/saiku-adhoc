@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Vector;
 
 import org.saiku.adhoc.model.master.SaikuMasterModel;
 import org.saiku.adhoc.model.master.SaikuParameter;
@@ -56,5 +57,31 @@ public class ParamUtils {
 		}
 		return reportParameters;
 	}
+	
+	public static String[] splitFirst(String source, String splitter)
+	  {
+	    // hold the results as we find them
+	    Vector rv = new Vector();
+	    int last = 0;
+	    int next = 0;
+
+	    // find first splitter in source
+	    next = source.indexOf(splitter, last);
+	    if (next != -1)
+	    {
+	      // isolate from last thru before next
+	      rv.add(source.substring(last, next));
+	      last = next + splitter.length();
+	    }
+
+	    if (last < source.length())
+	    {
+	      rv.add(source.substring(last, source.length()));
+	    }
+
+	    // convert to array
+	    return (String[]) rv.toArray(new String[rv.size()]);
+	  }
+
 
 }

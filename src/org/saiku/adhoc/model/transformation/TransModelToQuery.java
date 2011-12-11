@@ -50,6 +50,24 @@ public class TransModelToQuery {
 
 		Query query = new Query(domain, model);
 
+		//We also need the Group Fields to be in the query
+		for (SaikuGroup saikuGroup : smm.getGroups()) {
+			Category category = model.findCategory(saikuGroup.getCategory());
+			LogicalColumn column = model.findLogicalColumn(saikuGroup.getColumnId());
+			final AggregationType selectedAggType = AggregationType.NONE;
+			Selection selection = new Selection(category, column, selectedAggType);
+			query.getSelections().add(selection);
+
+			if(saikuGroup.getSort().equals("ASC")){
+				Order order =  new Order(selection, Type.ASC);
+				query.getOrders().add(order);
+			}else if(saikuGroup.getSort().equals("DESC")){
+				Order order =  new Order(selection, Type.DESC);
+				query.getOrders().add(order);
+			}
+
+		}		
+		
 		for (SaikuColumn saikuColumn : smm.getColumns()) {
 			if(saikuColumn.getFormula()==null){
 				Category category = model.findCategory(saikuColumn.getCategory());
@@ -71,38 +89,9 @@ public class TransModelToQuery {
 
 		}
 
-		//We also need the Group Fields to be in the query
-		for (SaikuGroup saikuGroup : smm.getGroups()) {
-			Category category = model.findCategory(saikuGroup.getCategory());
-			LogicalColumn column = model.findLogicalColumn(saikuGroup.getColumnId());
-			final AggregationType selectedAggType = AggregationType.NONE;
-			Selection selection = new Selection(category, column, selectedAggType);
-			query.getSelections().add(selection);
-
-			/*
-			Order order =  new Order(selection, Type.ASC);
-			query.getOrders().add(order);
-			 */
-
-		}
-
 		//Remove all old filters from query
 		query.getConstraints().clear();
 		query.getParameters().clear();
-
-		//add params
-		//		for (String filter : smm.getDerivedModels().getFilterQueries().keySet()) {
-		//			final String filterName = "F_" + filter.replace(".", "_");
-		//			//add filter to mql
-		//			String formula = "OR(" +
-		//			"IN([" + filter + "]; [param:" + filterName + "]);" +
-		//			"EQUALS(\"\"; [param:" + filterName + "]))";
-		//			Constraint cst = new Constraint(CombinationType.AND , formula);
-		//			query.getConstraints().add(cst);
-		//			//TODO: Dateparams
-		//			Parameter paramMql = new Parameter(filterName, DataType.STRING, "");
-		//			query.getParameters().add(paramMql);
-		//		}
 
 		final ArrayList<SaikuParameter> parameters = smm.getParameters();
 
@@ -123,7 +112,7 @@ public class TransModelToQuery {
 			}
 
 			if(param.getType().equals(DataType.DATE.getName())){
-				//date parameters
+
 				String formulaFrom = "["+columnId+"] > " + "[param:" + filterName + "_FROM]";
 				String formulaTo = "["+columnId+"] < " + "[param:" + filterName + "_TO]";
 

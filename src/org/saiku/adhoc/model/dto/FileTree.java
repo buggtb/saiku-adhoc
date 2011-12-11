@@ -1,21 +1,24 @@
 package org.saiku.adhoc.model.dto;
 
-import java.util.ArrayList;
 
 public class FileTree {
 
-	private ArrayList<Directory> directories;
+	private String xml;
 	
 	public FileTree() {
-		this.directories = new  ArrayList<Directory>();
 	}
 
-	public void setDirectories(ArrayList<Directory> directories) {
-		this.directories = directories;
+	public FileTree(String xml) {
+		this.xml = xml;
 	}
 
-	public ArrayList<Directory> getDirectories() {
-		return directories;
+	public void setXml(String xml) {
+		this.xml = xml;
 	}
+
+	public String getXml() {
+		return xml;
+	}
+
 
 }

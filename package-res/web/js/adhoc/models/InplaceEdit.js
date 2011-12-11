@@ -10,7 +10,11 @@ var InplaceEdit = Backbone.Model.extend({
     
     attach_listeners: function(args) {  	
 		//TODO: be more specific, only childs of report_inner
-        $(args.report.el).find(".saiku").click(this.clicked_element);
+        $(args.report.el).find(".saiku").click(this.clicked_element).hover(
+        function() { $(this).addClass("report-hover"); },
+        function() { $(this).removeClass("report-hover"); }
+   		 );
+        
         
         //simulate click on last edited element    
         if(this.query.lastEditElement!=null){    
