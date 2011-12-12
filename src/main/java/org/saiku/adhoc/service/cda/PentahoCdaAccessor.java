@@ -21,14 +21,34 @@ package org.saiku.adhoc.service.cda;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.dom4j.DocumentException;
+import org.pentaho.reporting.libraries.base.util.CSVTokenizer;
 import org.saiku.adhoc.exceptions.CdaException;
 import org.saiku.adhoc.model.master.SaikuMasterModel;
 import org.saiku.adhoc.model.master.SaikuParameter;
+import org.saiku.adhoc.server.query.LocalCDA;
 import org.saiku.adhoc.utils.ParamUtils;
+
+import pt.webdetails.cda.CdaEngine;
+import pt.webdetails.cda.CdaExecutor;
+import pt.webdetails.cda.CdaQueryComponent;
+import pt.webdetails.cda.connections.UnsupportedConnectionException;
+import pt.webdetails.cda.dataaccess.QueryException;
+import pt.webdetails.cda.dataaccess.UnsupportedDataAccessException;
+import pt.webdetails.cda.exporter.ExporterException;
+import pt.webdetails.cda.exporter.UnsupportedExporterException;
+import pt.webdetails.cda.query.QueryOptions;
+import pt.webdetails.cda.settings.CdaSettings;
+import pt.webdetails.cda.settings.SettingsManager;
+import pt.webdetails.cda.settings.UnknownDataAccessException;
 
 /**
  * PentahoCdaAccessor accesses CDA Plugin by calling the CDA's
@@ -82,21 +102,25 @@ public class PentahoCdaAccessor implements ICdaAccessor {
 //				params.put(filterName, values);			
 //			}
 //		}
+		//TODO Plugin
+		//final String result = PluginUtils.callPlugin("cda", "doQuery", params);
 
-		final String result = PluginUtils.callPlugin("cda", "doQuery", params);
-
-		try{
+        
+        String result = LocalCDA.localCDAQuery(params);
+		/*try{
 			FileWriter fstream = new FileWriter("c:/tmp/cda.xls");
 			BufferedWriter out = new BufferedWriter(fstream);
 			out.write(result);
 			out.close();
 		}catch (Exception e){
 			throw new CdaException(e.getMessage());
-		}
+		}*/
 
-
+		
 		return result;
 
 	}
+	
+
 
 }

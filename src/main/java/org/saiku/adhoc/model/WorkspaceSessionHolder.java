@@ -46,9 +46,9 @@ public class WorkspaceSessionHolder {
 	
 	public void initSession(SaikuMasterModel masterModel, String sessionId) {
 
-		// TODO: Move and make configurable
+		// TODO: Move and make configurable && plugin
 		String solution = "system";
-		String path = "saiku-adhoc/resources/templates/";
+		String path = "/Users/tombarber/Projects/saiku-adhoc/";
 		String name = SaikuProperties.defaultPrptTemplate;
 
 		masterModel.setReportTemplate(new ReportTemplate(solution, path, name));

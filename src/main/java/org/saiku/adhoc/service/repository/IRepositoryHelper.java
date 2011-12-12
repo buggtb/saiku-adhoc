@@ -35,6 +35,10 @@ public interface IRepositoryHelper {
 	public abstract boolean writeFile(String solution, String path,
 			String artifact, ByteArrayOutputStream contents);
 
+	public abstract boolean writeLocalFile(String path,
+            String artifact, byte[] bs);
+
+	
 	public abstract String getLocale(Domain domain);
 	
 	public ReportTemplate[] getTemplateList(final IPentahoSession userSession);

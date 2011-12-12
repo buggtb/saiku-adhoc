@@ -237,12 +237,13 @@ public class ReportGeneratorService {
 		
 			final ByteArrayOutputStream prptContent = new ByteArrayOutputStream();
 			BundleWriter.writeReportToZipStream(output, prptContent);
-			
-			String solution = "system";
-			String path = "saiku-adhoc/temp";
-
+			//TODO FIX PLUGIN
+			//String solution = "system";
+			//String path = "saiku-adhoc/temp";
+			String path =".";
 			String action = model.getDerivedModels().getSessionId() + ".prpt";
-			repository.writeFile(solution, path, action, prptContent);
+//			repository.writeFile(solution, path, action, prptContent);
+			repository.writeLocalFile(path, action, prptContent.toByteArray());
 
 			report.setData(stream.toString());
 

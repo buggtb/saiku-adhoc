@@ -107,12 +107,15 @@ public class SaikuMasterModel {
 
 	@JsonIgnore
 	public String getCdaPath() {
-
-		String solution = "system";
-		String path = "saiku-adhoc/temp";
+//TODO PLUGIN STUFF
+	//	String solution = "system";
+	//	String path = "saiku-adhoc/temp";
+	    String solution = "";
+	    String path = ".";
 		String action = this.derivedModels.getSessionId() + ".cda";
 
-		return solution + "/" + path + "/" + action;
+		//return solution + "/" + path + "/" + action;
+		return path + "/" + action;
 	}
 
 	public void setReportTemplate(ReportTemplate reportTemplate) {

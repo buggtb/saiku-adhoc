@@ -59,8 +59,8 @@ public class TransModelToCda {
 
 			String[] domainInfo = smm.getDerivedModels().getDomain().getId()
 					.split("/");
-
-			Connection connection = new MetadataConnection("1", domainInfo[0],
+//TODO FIX PLUGIN
+			Connection connection = new MetadataConnection("1", domainInfo[0]+"/"+domainInfo[1],
 					domainInfo[1]);
 			DataAccess dataAccess = new MqlDataAccess(sessionId, sessionId,
 					"1", "");

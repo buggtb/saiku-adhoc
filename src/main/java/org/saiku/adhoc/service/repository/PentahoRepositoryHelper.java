@@ -22,6 +22,8 @@ package org.saiku.adhoc.service.repository;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -106,7 +108,38 @@ public class PentahoRepositoryHelper implements IRepositoryHelper {
 		}
 		return null;
 	}
-
+	@Override
+	public boolean writeLocalFile(String path,
+            String artifact, byte[] contents){
+	    FileOutputStream fos =null;
+	    try {
+            fos = new FileOutputStream(path+artifact);
+        } catch (FileNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+	    
+        try {
+            fos.write(contents);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
+        try {
+            fos.close();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } 
+	    
+	    
+	    
+	    
+	    
+        return true;
+	    
+	}
 	private static boolean writeFile(String solution, String path,
 			String artifact, byte[] contents)
 			throws PentahoAccessControlException, UnsupportedEncodingException,

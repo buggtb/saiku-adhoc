@@ -46,10 +46,9 @@ import org.saiku.adhoc.service.repository.IRepositoryHelper;
 public class CdaQueryService {
 	
 	private Log log = LogFactory.getLog(CdaQueryService.class);
-	
-	private static final String solution = "system";
-	
-	private static final String path = "saiku-adhoc/temp";
+	//TODO FIX PLUGIN
+	private static final String solution = ".";
+	private static final String path = "./";
 
 	private ICdaAccessor cdaAccessor;
 	
@@ -88,7 +87,9 @@ public class CdaQueryService {
 		//Save the cda first
 		try {
 			model.deriveModels();
-			repository.writeFile(solution, path, action, model.getCdaSettings().asXML());
+			//TODO FIX PLUGIN
+			//repository.writeFile(solution, path, action, model.getCdaSettings().asXML());
+			repository.writeLocalFile(path, action, model.getCdaSettings().asXML().getBytes("UTF-8"));
 		} catch (Exception e) {
 			throw new QueryException(e.getMessage());
 		}

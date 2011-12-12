@@ -20,6 +20,7 @@
 
 package org.saiku.adhoc.model.transformation;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.Date;
 import java.util.List;
@@ -40,9 +41,13 @@ public class TransModelToReport {
 		String fullPath = smm.getReportTemplate().getFullPath();
 
 		final SimpleReportingComponent reportComponent = new SimpleReportingComponent();
-		reportComponent.setReportDefinitionPath(fullPath);
+		//TODO plugin detection
+		//reportComponent.setReportDefinitionPath(fullPath);
+		//final MasterReport reportTemplate = reportComponent.getReport();
+        FileInputStream in = null;
+        in = new FileInputStream("/Users/tombarber/Projects/saiku-adhoc/winter.prpt");
+		reportComponent.setReportDefinitionInputStream(in);
 		final MasterReport reportTemplate = reportComponent.getReport();
-
 		DefaultParameterDefinition paramDef = new DefaultParameterDefinition();
 
 		List<SaikuParameter> parameters = smm.getParameters();
