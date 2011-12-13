@@ -39,7 +39,7 @@ html, body {
 }
 
 .report-hover{
-	border: 1px dotted #000 !important; 
+	background-image:url(../../../images/highlight.png) !important; 
 }
 
 /** Header */
@@ -233,7 +233,7 @@ textarea.formula{
  }
 
 .adhoc-highlight{
-	background-image:url(../../../images/highlight.png);
+	background-image:url(../../../images/highlight-selected.png);
 }
 
 /** Toolbar */

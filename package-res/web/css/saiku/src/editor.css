@@ -39,6 +39,7 @@
     height: 12px;
     padding: 5px;
     width: 12px;
+    margin-top: 5px;
     -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
 }
@@ -117,4 +118,17 @@
 .editor .text-color {
     background: url('../../../images/edit-text-color.png') 50% 50% no-repeat;
 }
+
+.editor .fontstyle-bold  {
+    background: url('../../../images/edit-bold.png') 50% 50% no-repeat;
+}
+
+.editor .fontstyle-italic  {
+    background: url('../../../images/edit-italic.png') 50% 50% no-repeat;
+}
+
+.editor .fontstyle-udl  {
+    background: url('../../../images/edit-underline.png') 50% 50% no-repeat;
+}
+         
 

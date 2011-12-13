@@ -27,7 +27,10 @@ public class SaikuGroup {
 
 	public SaikuGroup() {
 		this.sort = "NONE";
+		this.groupsHeaderFormat = new SaikuElementFormat();	
 	}
+	
+	private SaikuElementFormat groupsHeaderFormat;
 
 	private String dataFormat;
 
@@ -124,6 +127,14 @@ public class SaikuGroup {
 
 	public String getSort() {
 		return sort;
+	}
+
+	public void setGroupsHeaderFormat(SaikuElementFormat groupsHeaderFormat) {
+		this.groupsHeaderFormat = groupsHeaderFormat;
+	}
+
+	public SaikuElementFormat getGroupsHeaderFormat() {
+		return groupsHeaderFormat;
 	}
 
 }

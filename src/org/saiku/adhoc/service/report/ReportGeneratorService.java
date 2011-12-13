@@ -42,6 +42,7 @@ import org.pentaho.reporting.engine.classic.core.AbstractReportDefinition;
 import org.pentaho.reporting.engine.classic.core.AttributeNames;
 import org.pentaho.reporting.engine.classic.core.MasterReport;
 import org.pentaho.reporting.engine.classic.core.ReportPreProcessor;
+import org.pentaho.reporting.engine.classic.core.ReportProcessingException;
 import org.pentaho.reporting.engine.classic.core.cache.CachingDataFactory;
 import org.pentaho.reporting.engine.classic.core.function.ProcessingContext;
 import org.pentaho.reporting.engine.classic.core.function.StructureFunction;
@@ -97,13 +98,10 @@ public class ReportGeneratorService {
 	 * @param acceptedPage 
 	 * @param template 
 	 * @return
-	 * @throws ReportException
-	 * @throws ModelException
+	 * @throws Exception 
 	 * @throws IOException
-	 * @throws ResourceException
 	 */
-	public void renderReportHtml(String sessionId, String templateName, HtmlReport report, Integer acceptedPage) throws ReportException,
-	ModelException, ResourceException {
+	public void renderReportHtml(String sessionId, String templateName, HtmlReport report, Integer acceptedPage) throws Exception {
 
 		//html
 		SaikuMasterModel model = sessionHolder.getModel(sessionId);
@@ -112,42 +110,30 @@ public class ReportGeneratorService {
 		model.setReportTemplate(template);
 
 		MasterReport output = null;
-		
+
 		output = processReport(model, output);			
 
-//		//prpt
-//		try {
-//			generatePrptOutput(model, output);
-//		} catch (BundleWriterException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (ContentIOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+		//		//prpt
+		//		try {
+		//			generatePrptOutput(model, output);
+		//		} catch (BundleWriterException e) {
+		//			// TODO Auto-generated catch block
+		//			e.printStackTrace();
+		//		} catch (ContentIOException e) {
+		//			// TODO Auto-generated catch block
+		//			e.printStackTrace();
+		//		} catch (IOException e) {
+		//			// TODO Auto-generated catch block
+		//			e.printStackTrace();
+		//		}
 
 		//html
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
-		try {
-			generateReport(output, stream, ParamUtils.getReportParameters("", model), report, acceptedPage);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
+		generateReport(output, stream, ParamUtils.getReportParameters("", model), report, acceptedPage);
 
 		//html
 		report.setData(stream.toString());		
-
-
-
-
-
-
-
-
 
 	}
 
@@ -158,28 +144,30 @@ public class ReportGeneratorService {
 	 * @param output
 	 * @return
 	 * @throws ReportException
+	 * @throws ReportProcessingException 
+	 * @throws ModelException 
 	 */
 	private MasterReport processReport(SaikuMasterModel model,
-			MasterReport output) throws ReportException {
+			MasterReport output) throws ReportException, ReportProcessingException, ModelException {
 
-		
+
 		CachingDataFactory dataFactory = null;
 
 		try {
 
-		model.deriveModels();
+			model.deriveModels();
 
-		final MasterReport reportTemplate = model.getDerivedModels().getReportTemplate();
-		
-		final WizardSpecification wizardSpecification = model
-		.getWizardSpecification();
+			final MasterReport reportTemplate = model.getDerivedModels().getReportTemplate();
 
-		reportTemplate.setDataFactory(model.getDerivedModels()
-				.getCdaDataFactory());
-		reportTemplate.setQuery(model.getDerivedModels().getSessionId());
+			final WizardSpecification wizardSpecification = model
+			.getWizardSpecification();
 
-		reportTemplate.setAttribute(AttributeNames.Wizard.NAMESPACE,
-				"wizard-spec", wizardSpecification);
+			reportTemplate.setDataFactory(model.getDerivedModels()
+					.getCdaDataFactory());
+			reportTemplate.setQuery(model.getDerivedModels().getSessionId());
+
+			reportTemplate.setAttribute(AttributeNames.Wizard.NAMESPACE,
+					"wizard-spec", wizardSpecification);
 
 
 			final ProcessingContext processingContext = new DefaultProcessingContext();
@@ -224,8 +212,6 @@ public class ReportGeneratorService {
 			output.setAttribute(AttributeNames.Wizard.NAMESPACE,
 					AttributeNames.Wizard.ENABLE, Boolean.FALSE);	
 
-		} catch (Exception e) {
-			throw new ReportException(e.getMessage());
 		} finally {
 			dataFactory.close();
 		}
@@ -246,16 +232,16 @@ public class ReportGeneratorService {
 
 		final ByteArrayOutputStream prptContent = new ByteArrayOutputStream();
 		ensureSaikuPreProcessorIsRemoved(output);
-	    BundleWriter.writeReportToZipStream(output, prptContent);
-	    
-	    /*
+		BundleWriter.writeReportToZipStream(output, prptContent);
+
+		/*
 		String solution = "system";
 		String path = "saiku-adhoc/temp";
 		String action = model.getDerivedModels().getSessionId() + ".prpt";
 		repository.writeFile(solution, path, action, prptContent);
-		*/
-	    
-	    return prptContent;
+		 */
+
+		return prptContent;
 
 	}
 
@@ -277,7 +263,7 @@ public class ReportGeneratorService {
 		return vals;
 	}
 
-	private Map<String, Object> getReportParameters(SaikuMasterModel model) {
+	private Map<String, Object> getReportParameters(SaikuMasterModel model) throws ParseException {
 
 		Map<String, Object> reportParameters = new HashMap<String, Object>();
 
@@ -301,15 +287,8 @@ public class ReportGeneratorService {
 				ArrayList<String> valueList = saikuParameter.getParameterValues();
 				String[] values = valueList.toArray(new String[valueList.size()]);
 
-				try {
-					reportParameters.put(nameFrom, dateFormat.parse(values[0]));
-					reportParameters.put(nameTo, dateFormat.parse(values[1]));
-
-				} catch (ParseException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-
+				reportParameters.put(nameFrom, dateFormat.parse(values[0]));
+				reportParameters.put(nameTo, dateFormat.parse(values[1]));
 
 			}
 
@@ -328,7 +307,7 @@ public class ReportGeneratorService {
 	 * @throws Exception 
 	 */
 	private void generateReport(MasterReport output, OutputStream stream,
-			Map<String, Object> reportParameters, HtmlReport report, Integer acceptedPage) throws Exception {
+			Map<String, Object> reportParameters, HtmlReport report, Integer acceptedPage) throws Exception{
 
 		final SimpleReportingComponent reportComponent = new SimpleReportingComponent();
 		reportComponent.setReport(output);
@@ -339,7 +318,9 @@ public class ReportGeneratorService {
 		reportComponent.setDashboardMode(true);  
 		reportComponent.setOutputStream(stream);
 		reportComponent.setAcceptedPage(acceptedPage);  
-
+		
+		//reportComponent.setUseContentRepository(false);
+		
 		reportComponent.validate();  
 		reportComponent.execute();
 
@@ -417,8 +398,8 @@ public class ReportGeneratorService {
 
 	}
 
-	public void savePrpt(String sessionId, String path, String file) {
-		
+	public void savePrpt(String sessionId, String path, String file) throws ReportException, BundleWriterException, ContentIOException, IOException, ReportProcessingException, ModelException {
+
 		SaikuMasterModel model = sessionHolder.getModel(sessionId);
 
 		if (!file.endsWith(".prpt")) {
@@ -430,34 +411,17 @@ public class ReportGeneratorService {
 		ByteArrayOutputStream prptContent = null;
 
 		MasterReport output = null;
-		
-		try {
-			
-			output = processReport(model, output);
-			prptContent = generatePrptOutput(model, output);
-			
-		} catch (BundleWriterException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ContentIOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ReportException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		
+
+		output = processReport(model, output);
+		prptContent = generatePrptOutput(model, output);
+
 		repository.writeFile(splits[0], splits[1], file, prptContent);
 
 
 	}
 
-	public void saveCda(String sessionId, String path, String file) {
-		
+	public void saveCda(String sessionId, String path, String file) throws OperationNotSupportedException, IOException, TransformerFactoryConfigurationError, TransformerException {
+
 		SaikuMasterModel model = sessionHolder.getModel(sessionId);
 
 		if (!file.endsWith(".cda")) {
@@ -465,22 +429,8 @@ public class ReportGeneratorService {
 		}
 
 		String[] splits = ParamUtils.splitFirst(path.substring(1),"/");
-	
-		try {
-			repository.writeFile(splits[0], splits[1], file, model.getCdaSettings().asXML());
-		} catch (OperationNotSupportedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (TransformerFactoryConfigurationError e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (TransformerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
+		repository.writeFile(splits[0], splits[1], file, model.getCdaSettings().asXML());
 
 
 	}

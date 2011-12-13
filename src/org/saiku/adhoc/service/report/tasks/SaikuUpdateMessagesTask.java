@@ -9,6 +9,7 @@ import org.pentaho.reporting.engine.classic.core.Element;
 import org.pentaho.reporting.engine.classic.core.ReportElement;
 import org.saiku.adhoc.model.dto.ElementFormat;
 import org.saiku.adhoc.model.master.SaikuElementFormat;
+import org.saiku.adhoc.model.master.SaikuMasterModel;
 import org.saiku.adhoc.model.master.SaikuMessage;
 import org.saiku.adhoc.utils.TemplateUtils;
 
@@ -17,12 +18,14 @@ public class SaikuUpdateMessagesTask implements UpdateTask {
 	private Log log = LogFactory.getLog(SaikuUpdateMessagesTask.class);
 	private List<SaikuMessage> messages;
 	private String prefix;
+	private SaikuMasterModel model;
 	
 	public SaikuUpdateMessagesTask(List<SaikuMessage> messages,
-			String prefix) {
+			String prefix, SaikuMasterModel model) {
 		
 		this.messages = messages;
 		this.prefix = prefix;
+		this.model = model;
 		
 	}
 
@@ -63,8 +66,17 @@ public class SaikuUpdateMessagesTask implements UpdateTask {
 		 * Transfer element style
 		 */	
 		e.setAttribute(AttributeNames.Core.NAMESPACE, AttributeNames.Core.VALUE, m.getValue());
+	
+		/*
+		 * Transfer element style
+		 */	
 		
-		TemplateUtils.mergeElementFormats(e.getStyle(), m.getElementFormat());
+		SaikuElementFormat tempFormat = (SaikuElementFormat) m.getElementFormat().clone();
+		
+		TemplateUtils.mergeElementFormats(e.getStyle(), tempFormat);
+		
+		model.getDerivedModels().getRptIdToElementFormat().put(uid, tempFormat);
+
 
 
 	}

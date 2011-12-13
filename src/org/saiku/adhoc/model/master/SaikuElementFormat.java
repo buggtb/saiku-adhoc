@@ -25,24 +25,24 @@ package org.saiku.adhoc.model.master;
  *
  * org.pentaho.reporting.engine.classic.wizard.model.ElementFormatDefinition.class
  */
-public class SaikuElementFormat {
-	
+public class SaikuElementFormat implements Cloneable {
+
 	public SaikuElementFormat() {
 		this.horizontalAlignment = "LEFT";
-		this.verticalAlignment = "CENTER";
+		this.verticalAlignment = "MIDDLE";
 	}
 
 	private String fontName;
-	
+
 	private int fontSize;
-	
+
 	//TODO: Es gibt auch ein Color format in Metadata PAckage
 	private String fontColor;
-	
+
 	private String horizontalAlignment;
 
 	private String verticalAlignment;
-	
+
 	private String backgroundColor;
 
 	public String getFontName() {
@@ -91,6 +91,14 @@ public class SaikuElementFormat {
 
 	public void setBackgroundColor(String backgroundColor) {
 		this.backgroundColor = backgroundColor;
+	}
+
+	public Object clone() {
+		try {
+			return super.clone();
+		} catch (CloneNotSupportedException e) { 
+			return null;
+		}
 	}
 
 }

@@ -64,6 +64,8 @@ var ElementFormatPanel = Backbone.View.extend({
 
     	$(this.el).html(this.template());
     	
+    	$(this.el).addClass('disabled_editor');
+    	
    	    $(this.el).find('.fontPicker').fontPicker();
    	    
    	    $(this.el).find('#fontPickerInput').change(
@@ -126,16 +128,30 @@ var ElementFormatPanel = Backbone.View.extend({
 
     reflect_formatting: function(model, response) {
     	
+    
     	this.json = response;
+    	var format = this.json.format;
 
+		//reset elements
     	$(this.el).removeClass('disabled_editor');
-    	$(this.el).find('select').removeAttr('disabled');
-    	
+    	$(this.el).find('select').removeAttr('disabled');	
 		$(this.el).find('.horz').removeClass('on');
+		$(this.el).find('.vert').removeClass('on');
 
-		var horzAlignment = response.format.horizontalAlignment.toLowerCase();
-		$(this.el).find('.align-' + horzAlignment).addClass('on');
+
+		var horzAlignment = format.horizontalAlignment.toLowerCase();
+		$(this.el).find('.horz.align-' + horzAlignment).addClass('on');
+
+		var vertAlignment = format.verticalAlignment.toLowerCase();
+		$(this.el).find('.vert.align-' + vertAlignment).addClass('on');
+
+		$(this.el).find('.sizeSelector select').val(format.fontSize);
 		
+		$(this.el).find('#fontPickerInput').val(format.fontName);
+		
+		//format.fontSize;
+		//format.fontName;
+
 		var that = this;
 		
 		var inplaceEditDelegate = {
@@ -162,6 +178,10 @@ var ElementFormatPanel = Backbone.View.extend({
     			});    
     		}	
     	});
+    	
+    	
+    	//we need to create a new json and only send back the 
+    	
     },
     
     fetch_values: function(element, type) {
@@ -212,6 +232,21 @@ var ElementFormatPanel = Backbone.View.extend({
     
     align_right: function(event) {
         this.json.format.horizontalAlignment = "RIGHT";
+        this.save(this.json);
+    },
+    
+    align_top: function(event) {
+        this.json.format.verticalAlignment = "TOP";
+        this.save(this.json);
+    },
+    
+    align_middle: function(event) {
+        this.json.format.verticalAlignment = "MIDDLE";
+         this.save(this.json);
+    },
+    
+    align_bottom: function(event) {
+        this.json.format.verticalAlignment = "BOTTOM";
         this.save(this.json);
     }
     

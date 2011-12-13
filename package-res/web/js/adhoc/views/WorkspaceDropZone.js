@@ -87,12 +87,16 @@ var WorkspaceDropZone = Backbone.View.extend({
         
         //ui.item.attr('id', _.uniqueId('col'));
         
-        //
+        //uid- independent of the dropzone
+        ui.item.attr('id', this.workspace.uniqueId('uid-'));
+        
+        /*
         if(ui.item.parents('.fields_list').attr('title')=='COLUMNS'){
         	ui.item.attr('id', this.workspace.uniqueId('rpt-dtl-'));
         }else if(ui.item.parents('.fields_list').attr('title')=='GROUPS'){
         	ui.item.attr('id', this.workspace.uniqueId('rpt-grp-'));
         }
+        */
         
 
         this.workspace.query.move_dimension(dimension, 
@@ -112,10 +116,7 @@ var WorkspaceDropZone = Backbone.View.extend({
                 ui.item.parents('.fields_list_body')
                 , index);
         }
-        
-        
-        
-        
+  
         // Prevent workspace from getting this event
         event.stopPropagation();
         return false;

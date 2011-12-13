@@ -7,15 +7,19 @@ import org.apache.commons.logging.LogFactory;
 import org.pentaho.reporting.engine.classic.core.AttributeNames;
 import org.pentaho.reporting.engine.classic.core.ReportElement;
 import org.saiku.adhoc.model.master.SaikuColumn;
+import org.saiku.adhoc.model.master.SaikuMasterModel;
 
 public class SaikuUpdateFooterTask implements UpdateTask {
 	
 	private Log log = LogFactory.getLog(SaikuUpdateFooterTask.class);
 
 	private List<SaikuColumn> columns;
-
-	public SaikuUpdateFooterTask(List<SaikuColumn> columns) {
-		this.columns = columns;
+	
+	private SaikuMasterModel model;
+	
+	public SaikuUpdateFooterTask(SaikuMasterModel model) {
+		this.columns = model.getColumns();
+		this.model = model;
 	}
 
 	@Override

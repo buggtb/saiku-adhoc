@@ -132,7 +132,6 @@ public class SaikuAdhocPreProcessor implements ReportPreProcessor {
 			return performSaikuPreProcessing(processedDefinition);
 
 		} catch (CloneNotSupportedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -625,12 +624,13 @@ public class SaikuAdhocPreProcessor implements ReportPreProcessor {
 					AttributeNames.Core.FIELD, groupDefinition.getField());
 			headerMessageElement.setAttribute(AttributeNames.Core.NAMESPACE,
 					AttributeNames.Core.NAME, groupDefinition.getDisplayName());
+			
 			headerMessageElement.setAttribute(AttributeNames.Core.NAMESPACE,
 					AttributeNames.Core.VALUE, 
 					groupDefinition.getDisplayName() + ": $(" + groupDefinition.getField() + ")"
-					);	
-			
-			
+					);		
+		
+			//there can be only one!
 			headerElement.addElement(headerMessageElement);
 
 			content.clear();
@@ -856,7 +856,7 @@ public class SaikuAdhocPreProcessor implements ReportPreProcessor {
 			return;
 
 		iterateSection(pageFooter, 
-				new SaikuUpdateMessagesTask(model.getPageFooterMessages(), PAGE_FOOTER_MSG));
+				new SaikuUpdateMessagesTask(model.getPageFooterMessages(), PAGE_FOOTER_MSG, model));
 		
 	}
 
@@ -866,7 +866,7 @@ public class SaikuAdhocPreProcessor implements ReportPreProcessor {
 			return;
 
 		iterateSection(pageHeader, 
-				new SaikuUpdateMessagesTask(model.getPageHeaderMessages(), PAGE_HEADER_MSG));
+				new SaikuUpdateMessagesTask(model.getPageHeaderMessages(), PAGE_HEADER_MSG, model));
 		
 	}
 
@@ -877,7 +877,7 @@ public class SaikuAdhocPreProcessor implements ReportPreProcessor {
 			return;
 
 		iterateSection(reportFooter, 
-				new SaikuUpdateMessagesTask(model.getReportFooterMessages(), RPT_FOOTER_MSG));
+				new SaikuUpdateMessagesTask(model.getReportFooterMessages(), RPT_FOOTER_MSG, model));
 		
 	}
 
@@ -888,7 +888,7 @@ public class SaikuAdhocPreProcessor implements ReportPreProcessor {
 			return;
 
 		iterateSection(reportHeader, 
-				new SaikuUpdateMessagesTask(model.getReportHeaderMessages(), RPT_HEADER_MSG));
+				new SaikuUpdateMessagesTask(model.getReportHeaderMessages(), RPT_HEADER_MSG, model));
 		
 	}
 
@@ -901,18 +901,18 @@ public class SaikuAdhocPreProcessor implements ReportPreProcessor {
 		if (detailsHeader == null)
 			return;
 		iterateSection(detailsHeader,
-				new SaikuUpdateDetailsHeaderTask(model.getColumns()));
+				new SaikuUpdateDetailsHeaderTask(model));
 
 		final Band itemBand = definition.getItemBand();
 		if (itemBand == null)
 			return;
-		iterateSection(itemBand, new SaikuUpdateDetailsTask(model.getColumns()));
+		iterateSection(itemBand, new SaikuUpdateDetailsTask(model));
 
 		final Band detailsFooter = definition.getDetailsFooter();
 		if (detailsFooter == null)
 			return;
 		iterateSection(detailsFooter,
-				new SaikuUpdateFooterTask(model.getColumns()));
+				new SaikuUpdateFooterTask(model));
 		
 	}
 
@@ -946,7 +946,7 @@ public class SaikuAdhocPreProcessor implements ReportPreProcessor {
 
 	private void configureSaikuGroupHeader(Group group, SaikuGroup saikuGroup,
 			int groupIndex) {
-		iterateSection(group, new SaikuUpdateGroupHeaderTask(saikuGroup,groupIndex));	
+		iterateSection(group, new SaikuUpdateGroupHeaderTask(model, saikuGroup,groupIndex));	
 	}
 
 	/**

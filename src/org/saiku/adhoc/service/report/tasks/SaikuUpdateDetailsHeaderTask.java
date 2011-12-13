@@ -26,16 +26,21 @@ import org.apache.commons.logging.LogFactory;
 import org.pentaho.reporting.engine.classic.core.AttributeNames;
 import org.pentaho.reporting.engine.classic.core.ReportElement;
 import org.saiku.adhoc.model.master.SaikuColumn;
+import org.saiku.adhoc.model.master.SaikuElementFormat;
+import org.saiku.adhoc.model.master.SaikuMasterModel;
 import org.saiku.adhoc.utils.TemplateUtils;
 
 public class SaikuUpdateDetailsHeaderTask implements UpdateTask {
 	
-	public SaikuUpdateDetailsHeaderTask(List<SaikuColumn> columns) {
+	public SaikuUpdateDetailsHeaderTask(SaikuMasterModel model) {
 		super();
-		this.columns = columns;
+		this.columns = model.getColumns();
+		this.model = model;
 	}
 
 	private Log log = LogFactory.getLog(SaikuUpdateDetailsHeaderTask.class);
+	
+	private SaikuMasterModel model;
 
 	private List<SaikuColumn> columns;
 
@@ -49,8 +54,14 @@ public class SaikuUpdateDetailsHeaderTask implements UpdateTask {
 		 */
 		final SaikuColumn saikuColumn = columns.get(index);
 		
-		final String htmlClass = "saiku " + columns.get(index).getUid().replace("rpt-dtl-", "rpt-dth-");;
+		final String rptId = "rpt-dth-" + index;
 		
+		//final String htmlClass = "saiku " + columns.get(index).getUid().replace("rpt-dtl-", "rpt-dth-");;
+		
+		final String htmlClass = "saiku " + rptId;
+		
+		model.getDerivedModels().getRptIdToSaikuElement().put(rptId, saikuColumn);
+
 		e.setAttribute(AttributeNames.Html.NAMESPACE, AttributeNames.Html.STYLE_CLASS, htmlClass);
 	
 		e.setAttribute("http://reporting.pentaho.org/namespaces/engine/attributes/wizard", "allow-metadata-styling", Boolean.FALSE);
@@ -58,7 +69,12 @@ public class SaikuUpdateDetailsHeaderTask implements UpdateTask {
 		/*
 		 * Transfer element style
 		 */	
-		TemplateUtils.mergeElementFormats(e.getStyle(), saikuColumn.getColumnHeaderFormat());
+		
+		SaikuElementFormat tempFormat = (SaikuElementFormat) saikuColumn.getColumnHeaderFormat().clone();
+		
+		TemplateUtils.mergeElementFormats(e.getStyle(), tempFormat);
+		
+		model.getDerivedModels().getRptIdToElementFormat().put(rptId, tempFormat);
 
 	}
 

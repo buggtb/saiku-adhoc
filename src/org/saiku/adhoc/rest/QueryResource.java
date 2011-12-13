@@ -80,21 +80,21 @@ public class QueryResource extends PentahoBase {
 	private EditorService editorService;
 
 	private ReportGeneratorService reportGeneratorService;
-	
+
 	@GET
 	@Produces({"application/json" })
 	@Path("/{queryname}/json")
 	public SavedQuery getModelJson(@PathParam("queryname") String queryName){
-		
+
 		if (log.isDebugEnabled()) {
 			log.debug("REST:GET " + queryName + " saveQuery");
 		}
-		
+
 		try {
 			String json = editorService.getModelJson(queryName);
 
 			return new SavedQuery(queryName, null, json);
-			
+
 		} catch (JsonGenerationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -106,32 +106,19 @@ public class QueryResource extends PentahoBase {
 			e.printStackTrace();
 		}
 		return null;
-		
+
 	}
 
 	@GET
 	@Produces({ "application/json" })
 	@Path("/{queryname}/result")
-	public String executeQuery(@PathParam("queryname") String sessionId) {
+	public String executeQuery(@PathParam("queryname") String sessionId) throws QueryException, CdaException {
 
 		if (log.isDebugEnabled()) {
 			log.debug("REST:GET " + sessionId + " executeQuery");
 		}
 
-		
-		try {
-
-			return queryService.runQuery(sessionId, sessionId);
-
-		} catch (QueryException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (CdaException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		//???
-		return null;
+		return queryService.runQuery(sessionId, sessionId);
 
 	}
 
@@ -144,7 +131,7 @@ public class QueryResource extends PentahoBase {
 		if (log.isDebugEnabled()) {
 			log.debug("REST:POST " + sessionId + " createQuery");
 		}
-		
+
 		try {
 
 			if (log.isDebugEnabled()) {
@@ -231,9 +218,9 @@ public class QueryResource extends PentahoBase {
 		if (log.isDebugEnabled()) {
 			log.debug("REST:GET " + sessionId + " getFilterValues category="+ category + " column=" + column);
 		}
-		
+
 		try {
-					
+
 			return queryService.getFilterResult(sessionId, category, column);
 		} catch (CdaException e) {
 			// TODO Auto-generated catch block
@@ -257,10 +244,10 @@ public class QueryResource extends PentahoBase {
 			@PathParam("queryname") String sessionId,
 			@PathParam("template") String template,
 			@PathParam("page") String page
-			) {
+	) {
 
 		//TODO: acceptedPage mit übergeben
-		
+
 		if (log.isDebugEnabled()) {
 			log.debug("REST:GET " + sessionId + " generate");
 		}
@@ -274,14 +261,14 @@ public class QueryResource extends PentahoBase {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			
+
 			log.error("Cannot generate Report", e);
 		}
 
 		return null;
 	}
 
-	
+
 	@GET
 	@Produces({ "application/json" })
 	@Path("/{queryname}/ROWLIMIT/{rowlimit}")
@@ -306,7 +293,7 @@ public class QueryResource extends PentahoBase {
 			@PathParam("category") String category,
 			@PathParam("column") String businessColumn,
 			@PathParam("position") Integer pos) {
-		
+
 		if (log.isDebugEnabled()) {
 			log.debug("REST:POST " + sessionId + " addColumn uid=" + position.getUid() + " position=" + position.getPosition() 
 					+ " category=" + category + " column=" + businessColumn);
@@ -329,7 +316,7 @@ public class QueryResource extends PentahoBase {
 			@PathParam("category") String category,
 			@PathParam("column") String businessColumn,
 			@PathParam("position") Integer position) {
-		
+
 		if (log.isDebugEnabled()) {
 			log.debug("REST:DELETE " + sessionId + " removeColumn position=" + position
 					+ " category=" + category + " column=" + businessColumn);
@@ -352,7 +339,7 @@ public class QueryResource extends PentahoBase {
 			@PathParam("queryname") String sessionId,
 			@PathParam("category") String category,
 			@PathParam("column") String businessColumn) {
-		
+
 		if (log.isDebugEnabled()) {
 			log.debug("REST:POST " + sessionId + " addFilter position=" + position
 					+ " category=" + category + " column=" + businessColumn);
@@ -376,7 +363,7 @@ public class QueryResource extends PentahoBase {
 			@PathParam("category") String category,
 			@PathParam("column") String businessColumn,
 			@PathParam("position") Integer position) {
-		
+
 		if (log.isDebugEnabled()) {
 			log.debug("REST:DELETE " + sessionId + " removeFilter position=" + position
 					+ " category=" + category + " column=" + businessColumn);
@@ -401,7 +388,7 @@ public class QueryResource extends PentahoBase {
 			@PathParam("queryname") String sessionId,
 			@PathParam("category") String category,
 			@PathParam("column") String businessColumn) {
-		
+
 		if (log.isDebugEnabled()) {
 			log.debug("REST:POST " + sessionId + " setFilterValues " + 
 					"category=" + category + " column=" + businessColumn);
@@ -426,7 +413,7 @@ public class QueryResource extends PentahoBase {
 			@PathParam("category") String category,
 			@PathParam("column") String businessColumn,
 			@PathParam("position") Integer pos) {
-		
+
 		if (log.isDebugEnabled()) {
 			log.debug("REST:POST " + sessionId + " addGroup uid=" + position.getUid() + " position=" + position.getPosition() 
 					+ " category=" + category + " column=" + businessColumn);
@@ -449,7 +436,7 @@ public class QueryResource extends PentahoBase {
 			@PathParam("category") String category,
 			@PathParam("column") String businessColumn,
 			@PathParam("position") Integer position) {
-		
+
 		if (log.isDebugEnabled()) {
 			log.debug("REST:DELETE " + sessionId + " removeGroup position=" + position
 					+ " category=" + category + " column=" + businessColumn);
@@ -498,12 +485,12 @@ public class QueryResource extends PentahoBase {
 			@PathParam("category") String category,
 			@PathParam("column") String column,
 			@PathParam("position") Integer position) {
-		
+
 		if (log.isDebugEnabled()) {
 			log.debug("REST:POST " + sessionId + " setColumnConfig position=" + position
 					+ " category=" + category + " column=" + column);
 		}
-		
+
 		try {
 			if(config.getFormula()!=null){
 				//we have a new calculated column
@@ -513,13 +500,13 @@ public class QueryResource extends PentahoBase {
 			}
 			return Status.OK;
 		} catch (Exception e) {
-			
+
 			e.printStackTrace();
-			
+
 			return Status.INTERNAL_SERVER_ERROR;
 		}
 	}
-	
+
 	@POST
 	@Consumes({ "application/json" })
 	@Path("/{queryname}/COLUMNS/CATEGORY/{category}/COLUMN/{column}/POSITION/{position}/SORT/{order}")
@@ -529,7 +516,7 @@ public class QueryResource extends PentahoBase {
 			@PathParam("column") String column,
 			@PathParam("position") Integer position,
 			@PathParam("order") String order) {
-		
+
 		if (log.isDebugEnabled()) {
 			log.debug("REST:POST " + sessionId + " sort position=" + position
 					+ " category=" + category + " column=" + column);
@@ -540,7 +527,7 @@ public class QueryResource extends PentahoBase {
 			return Status.OK;
 		} catch (Exception e) {
 			e.printStackTrace();
-			
+
 			return Status.INTERNAL_SERVER_ERROR;
 		}
 
@@ -555,7 +542,7 @@ public class QueryResource extends PentahoBase {
 			@PathParam("column") String column,
 			@PathParam("position") Integer position,
 			@PathParam("order") String order) {
-		
+
 		if (log.isDebugEnabled()) {
 			log.debug("REST:POST " + sessionId + " sort position=" + position
 					+ " category=" + category + " column=" + column);
@@ -566,7 +553,7 @@ public class QueryResource extends PentahoBase {
 			return Status.OK;
 		} catch (Exception e) {
 			e.printStackTrace();
-			
+
 			return Status.INTERNAL_SERVER_ERROR;
 		}
 
@@ -589,9 +576,9 @@ public class QueryResource extends PentahoBase {
 			ReportGeneratorService reportGeneratorService) {
 		this.reportGeneratorService = reportGeneratorService;
 	}
-	
+
 	//Edit Elements
-	
+
 	@GET
 	@Produces({ "application/json" })
 	@Path("/{queryname}/FORMAT/ELEMENT/{id}")
@@ -603,15 +590,15 @@ public class QueryResource extends PentahoBase {
 
 			//return editorService.getColumnConfig(sessionId,id);
 			return editorService.getElementFormat(sessionId, id);
-			
-			
+
+
 		} catch (Exception e) {
 			log.error("Cannot execute Query", e);
 		}
 
 		return null;
 	}
-	
+
 	@POST
 	@Consumes({ "application/json" })
 	@Path("/{queryname}/FORMAT/ELEMENT/{id}")
@@ -632,28 +619,28 @@ public class QueryResource extends PentahoBase {
 	public Status exportPrpt(
 			SolutionFileInfo file,
 			@PathParam("queryname") String sessionId) {
-		
+
 		try {
 			reportGeneratorService.savePrpt(sessionId, file.getPath(),file.getFile());
 			return Status.OK;
 		} catch (Exception e) {
-			
+
 			return Status.INTERNAL_SERVER_ERROR;
 		}
 	}
-	
+
 	@POST
 	@Path("/{queryname}/EXPORT/CDA")
 	public Status exportCda(
 			SolutionFileInfo file,
 			@PathParam("queryname") String sessionId) {
-		
+
 		try {
 			reportGeneratorService.saveCda(sessionId, file.getPath(),file.getFile());
-			
+
 			return Status.OK;
 		} catch (Exception e) {
-			
+
 			return Status.INTERNAL_SERVER_ERROR;
 		}
 	}

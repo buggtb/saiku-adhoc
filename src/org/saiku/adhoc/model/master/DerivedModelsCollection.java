@@ -66,6 +66,10 @@ public class DerivedModelsCollection {
 	private LogicalModel logicalModel;
 	private QueryXmlHelper xmlHelper; 
 	private DataFactory cdaDataFactory;
+	
+	private Map<String,Object> rptIdToSaikuElement;
+	
+	private Map<String,SaikuElementFormat> rptIdToElementFormat;
 
 	public DerivedModelsCollection(String sessionId, Domain domain,
 			LogicalModel model) throws ModelException {
@@ -81,6 +85,9 @@ public class DerivedModelsCollection {
 		this.filterQueries = new HashMap<String,Query>();
 		//this.filterValues = new HashMap<String,ArrayList<String>>();	
 		this.paramDef = new DefaultParameterDefinition();
+		
+		this.rptIdToSaikuElement = new HashMap<String, Object>();
+		this.rptIdToElementFormat = new HashMap<String,SaikuElementFormat>();		
 
 		try{
 			//init cda
@@ -237,6 +244,22 @@ public class DerivedModelsCollection {
 
 	public DataFactory getCdaDataFactory() {
 		return cdaDataFactory;
+	}
+
+	public void setRptIdToSaikuElement(Map<String,Object> rptIdToSaikuElement) {
+		this.rptIdToSaikuElement = rptIdToSaikuElement;
+	}
+
+	public Map<String,Object> getRptIdToSaikuElement() {
+		return rptIdToSaikuElement;
+	}
+
+	public void setRptIdToElementFormat(Map<String,SaikuElementFormat> rptIdToElementFormat) {
+		this.rptIdToElementFormat = rptIdToElementFormat;
+	}
+
+	public Map<String,SaikuElementFormat> getRptIdToElementFormat() {
+		return rptIdToElementFormat;
 	}
 	
 }

@@ -7,7 +7,6 @@
 	<classpathentry kind="lib" path="dev-lib/json-lib-2.3-jdk15.jar"/>
 	<classpathentry kind="lib" path="dev-lib/robochef-0.9.5.jar"/>
 	<classpathentry kind="lib" path="dev-lib/json_simple-1.1.jar"/>
-	<classpathentry kind="lib" path="dev-lib/pentaho-reporting-engine-classic-extensions-cda-3.8.0-GA.jar"/>
 	<classpathentry kind="lib" path="dev-lib/pentaho-reporting-engine-classic-extensions-cda-3.8-SNAPSHOT.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

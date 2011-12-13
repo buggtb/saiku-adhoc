@@ -213,26 +213,15 @@ public class TemplateUtils {
 					ElementStyleKeys.ALIGNMENT, saikuToPrptAlignment(saikuFormat.getHorizontalAlignment()));
 		}
 
-		/*
-		if(saikuFormat.getHorizontalAlignment()==null){
-			final String horz = (String) prptFormat.getStyleProperty(
-					ElementStyleKeys.ALIGNMENT, null);
-			saikuFormat.setHorizontalAlignment(horz);
-		}else{
-			prptFormat.setStyleProperty(
-					ElementStyleKeys.ALIGNMENT, saikuFormat.getHorizontalAlignment());
-		}
-		*/
-		
 		if(saikuFormat.getVerticalAlignment()==null){
-			final String vert = ((VerticalTextAlign) prptFormat.getStyleProperty(
-					TextStyleKeys.VERTICAL_TEXT_ALIGNMENT, null)).toString();
+			final String vert = (String) prptFormat.getStyleProperty(
+					ElementStyleKeys.VALIGNMENT, null);
 			saikuFormat.setVerticalAlignment(vert);
 		}else{
 			prptFormat.setStyleProperty(
-					TextStyleKeys.VERTICAL_TEXT_ALIGNMENT, 
-					VerticalTextAlign.valueOf(saikuFormat.getVerticalAlignment()));
+					ElementStyleKeys.VALIGNMENT, saikuToPrptAlignment(saikuFormat.getVerticalAlignment()));
 		}
+
 
 		if(saikuFormat.getFontSize()==0){
 			final Integer size = (Integer) prptFormat.getStyleProperty(

@@ -1,6 +1,6 @@
 /**
  * Dialog for column setup
- */
+
 var ColumnSetupModal = Modal.extend({
     type: "selections",
     
@@ -133,3 +133,4 @@ var ColumnSetupModal = Modal.extend({
         this.close();
     }
 });
+ */
