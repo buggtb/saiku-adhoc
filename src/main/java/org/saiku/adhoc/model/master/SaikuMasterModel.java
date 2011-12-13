@@ -42,35 +42,36 @@ import pt.webdetails.cda.settings.CdaSettings;
 
 public class SaikuMasterModel {
 
-	private List<SaikuColumn> columns;
+	protected List<SaikuColumn> columns;
 
-	private List<SaikuMessage> reportHeaderMessages;
+	protected List<SaikuMessage> reportHeaderMessages;
 
-	private List<SaikuMessage> reportFooterMessages;
+	protected List<SaikuMessage> reportFooterMessages;
 	
-	private List<SaikuMessage> pageHeaderMessages;
+	protected List<SaikuMessage> pageHeaderMessages;
 	
-	private List<SaikuMessage> pageFooterMessages;
+	protected List<SaikuMessage> pageFooterMessages;
 	
 
-	private List<SaikuGroup> groups;
+	protected List<SaikuGroup> groups;
 
-	private ArrayList<SaikuParameter> parameters;
+	protected ArrayList<SaikuParameter> parameters;
 
-	private List<String> sortColumns;
+	protected List<String> sortColumns;
 
 	private String reportTitle;
 	
-	private String clientModelSelection;
+	protected String clientModelSelection;
 	
-	private SaikuReportSettings settings;
+	protected SaikuReportSettings settings;
 
 	@JsonIgnore
-	private DerivedModelsCollection derivedModels;
+    protected DerivedModelsCollection derivedModels;
 
 	public void init(Domain domain, LogicalModel model, String sessionId) throws ModelException{
 
 		this.derivedModels = new DerivedModelsCollection(sessionId, domain, model);
+		derivedModels.init();
 		
 		this.settings = new SaikuReportSettings();
 
@@ -107,16 +108,13 @@ public class SaikuMasterModel {
 
 	@JsonIgnore
 	public String getCdaPath() {
-//TODO PLUGIN STUFF
-	//	String solution = "system";
-	//	String path = "saiku-adhoc/temp";
-	    String solution = "";
-	    String path = ".";
+		String solution = "system";
+		String path = "saiku-adhoc/temp";
+	 
 		String action = this.derivedModels.getSessionId() + ".cda";
 
-		//return solution + "/" + path + "/" + action;
-		return path + "/" + action;
-	}
+		return solution + "/" + path + "/" + action;
+		}
 
 	public void setReportTemplate(ReportTemplate reportTemplate) {
 		this.settings.setReportTemplate(reportTemplate);		

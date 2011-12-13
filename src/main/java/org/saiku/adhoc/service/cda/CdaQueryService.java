@@ -45,16 +45,16 @@ import org.saiku.adhoc.service.repository.IRepositoryHelper;
 
 public class CdaQueryService {
 	
-	private Log log = LogFactory.getLog(CdaQueryService.class);
+	protected Log log = LogFactory.getLog(CdaQueryService.class);
 	//TODO FIX PLUGIN
 	private static final String solution = ".";
 	private static final String path = "./";
 
-	private ICdaAccessor cdaAccessor;
+	protected ICdaAccessor cdaAccessor;
 	
-	private IRepositoryHelper repository;
+	protected IRepositoryHelper repository;
 	
-	private WorkspaceSessionHolder sessionHolder;
+	protected WorkspaceSessionHolder sessionHolder;
 
 	public void setSessionHolder(WorkspaceSessionHolder sessionHolder) {
 		this.sessionHolder = sessionHolder;
@@ -88,8 +88,7 @@ public class CdaQueryService {
 		try {
 			model.deriveModels();
 			//TODO FIX PLUGIN
-			//repository.writeFile(solution, path, action, model.getCdaSettings().asXML());
-			repository.writeLocalFile(path, action, model.getCdaSettings().asXML().getBytes("UTF-8"));
+			repository.writeFile(solution, path, action, model.getCdaSettings().asXML());
 		} catch (Exception e) {
 			throw new QueryException(e.getMessage());
 		}

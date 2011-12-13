@@ -44,8 +44,6 @@ import org.saiku.adhoc.model.master.ReportTemplate;
 import org.saiku.adhoc.model.metadata.impl.MetadataModel;
 import org.saiku.adhoc.model.metadata.impl.MetadataModelInfo;
 import org.saiku.adhoc.model.metadata.impl.ModelInfoComparator;
-import org.saiku.adhoc.server.repository.MemoryBasedRepository;
-
 
 
 /**
@@ -61,14 +59,13 @@ public class PentahoMetadataService extends PentahoBase implements IMetadataServ
 
 	private Log logger = LogFactory.getLog(PentahoMetadataService.class);
 
-	private final IMetadataDomainRepository repo;
+	protected IMetadataDomainRepository repo;
 	
-	private IRepositoryHelper repositoryHelper;
-	MemoryBasedRepository mbr;
+	protected IRepositoryHelper repositoryHelper;
+	
 	public PentahoMetadataService() {
 		setLoggingLevel(ILogger.ERROR);
 		//repo = (SecurityAwareMetadataDomainRepository) getMetadataRepository();
-		mbr = new MemoryBasedRepository();
 		repo = getMetadataRepository();
 	}
 
@@ -230,12 +227,10 @@ public class PentahoMetadataService extends PentahoBase implements IMetadataServ
 	 * @return
 	 */
 	protected IMetadataDomainRepository getMetadataRepository() {
-		//TODO Add plugin detection code.
-	    /*IMetadataDomainRepository mdr = PentahoSystem
+		IMetadataDomainRepository mdr = PentahoSystem
 				.get(IMetadataDomainRepository.class,
 						PentahoSessionHolder.getSession());
-	     */
-	    IMetadataDomainRepository mdr = mbr.getImmdr();
+	     
 	    if (mdr instanceof ILogger) {
             ((ILogger) mdr).setLoggingLevel(getLoggingLevel());
         }

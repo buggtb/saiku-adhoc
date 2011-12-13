@@ -17,7 +17,7 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
  *
  */
-package org.saiku.adhoc.service.cda;
+package org.saiku.adhoc.server.model.service.cda;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,6 +25,7 @@ import java.util.Map;
 import org.saiku.adhoc.exceptions.CdaException;
 import org.saiku.adhoc.model.master.SaikuMasterModel;
 import org.saiku.adhoc.server.query.LocalCDA;
+import org.saiku.adhoc.service.cda.PentahoCdaAccessor;
 import org.saiku.adhoc.utils.ParamUtils;
 
 /**
@@ -34,7 +35,7 @@ import org.saiku.adhoc.utils.ParamUtils;
  * @author mgie
  *
  */
-public class PentahoCdaAccessor implements ICdaAccessor {
+public class PentahoCdaAccessorServer extends PentahoCdaAccessor {
 
     /* (non-Javadoc)
      * @see refac.saiku.adhoc.service.cda.ICdaAccessor#doQuery(org.saiku.adhoc.model.AdhocReportModel, java.lang.String, java.lang.String)
@@ -56,40 +57,9 @@ public class PentahoCdaAccessor implements ICdaAccessor {
         
         params.putAll(ParamUtils.getReportParameters("param", model));
 
-//      HashMap<String,ArrayList<String>> valuesMap  = new HashMap<String,ArrayList<String>>();
-//      
-//      final ArrayList<SaikuParameter> parameters = model.getParameters();
-//      for (SaikuParameter saikuParameter : parameters) {
-//          String filterKey = saikuParameter.getCategory() + "." + saikuParameter.getId(); 
-//          valuesMap.put(filterKey, saikuParameter.getParameterValues());
-//      }
-//      
-//
-//      if(!valuesMap.isEmpty()){
-//          for (String filter : valuesMap.keySet()) {
-//              String filterName = "paramF_" + filter.replace(".", "_");
-//              final ArrayList<String> valueList = valuesMap.get(filter);
-//              String[] values = null;
-//              if(!valueList.isEmpty()){
-//                  values = valueList.toArray(new String[valueList.size()]);
-//              }else{
-//                  values = new String[]{""};  
-//              }
-//
-//              params.put(filterName, values);         
-//          }
-//      }
+        
+        String result = LocalCDA.localCDAQuery(params);
 
-        final String result = PluginUtils.callPlugin("cda", "doQuery", params);
-
-        /*try{
-            FileWriter fstream = new FileWriter("c:/tmp/cda.xls");
-            BufferedWriter out = new BufferedWriter(fstream);
-            out.write(result);
-            out.close();
-        }catch (Exception e){
-            throw new CdaException(e.getMessage());
-        }*/
 
         
         return result;

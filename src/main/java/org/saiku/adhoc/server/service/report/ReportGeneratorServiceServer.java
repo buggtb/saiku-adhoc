@@ -18,28 +18,18 @@
  *
  */
 
-package org.saiku.adhoc.service.report;
+package org.saiku.adhoc.server.service.report;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.pentaho.reporting.engine.classic.core.AbstractReportDefinition;
 import org.pentaho.reporting.engine.classic.core.AttributeNames;
 import org.pentaho.reporting.engine.classic.core.MasterReport;
 import org.pentaho.reporting.engine.classic.core.ReportPreProcessor;
 import org.pentaho.reporting.engine.classic.core.cache.CachingDataFactory;
 import org.pentaho.reporting.engine.classic.core.function.ProcessingContext;
-import org.pentaho.reporting.engine.classic.core.function.StructureFunction;
 import org.pentaho.reporting.engine.classic.core.layout.output.DefaultProcessingContext;
 import org.pentaho.reporting.engine.classic.core.modules.output.table.html.HtmlTableModule;
 import org.pentaho.reporting.engine.classic.core.modules.parser.bundle.writer.BundleWriter;
@@ -48,38 +38,20 @@ import org.pentaho.reporting.engine.classic.core.states.StateUtilities;
 import org.pentaho.reporting.engine.classic.core.states.datarow.DefaultFlowController;
 import org.pentaho.reporting.engine.classic.core.util.ReportParameterValues;
 import org.pentaho.reporting.engine.classic.core.wizard.DataSchemaDefinition;
-import org.pentaho.reporting.engine.classic.wizard.WizardOverrideFormattingFunction;
-import org.pentaho.reporting.engine.classic.wizard.WizardProcessor;
 import org.pentaho.reporting.engine.classic.wizard.model.WizardSpecification;
 import org.pentaho.reporting.libraries.resourceloader.ResourceException;
-import org.pentaho.reporting.platform.plugin.SimpleReportingComponent;
 import org.saiku.adhoc.exceptions.ModelException;
 import org.saiku.adhoc.exceptions.ReportException;
-import org.saiku.adhoc.model.WorkspaceSessionHolder;
 import org.saiku.adhoc.model.dto.HtmlReport;
 import org.saiku.adhoc.model.master.ReportTemplate;
 import org.saiku.adhoc.model.master.SaikuMasterModel;
-import org.saiku.adhoc.model.master.SaikuParameter;
+import org.saiku.adhoc.server.reporting.SaikuReportingComponent;
 import org.saiku.adhoc.service.SaikuProperties;
-import org.saiku.adhoc.service.repository.IRepositoryHelper;
+import org.saiku.adhoc.service.report.ReportGeneratorService;
+import org.saiku.adhoc.service.report.SaikuAdhocPreProcessor;
 import org.saiku.adhoc.utils.ParamUtils;
 
-public class ReportGeneratorService {
-
-	protected WorkspaceSessionHolder sessionHolder;
-
-	protected IRepositoryHelper repository;
-
-	protected static final Log log = LogFactory
-	.getLog(ReportGeneratorService.class);
-
-	public void setSessionHolder(WorkspaceSessionHolder sessionHolder) {
-		this.sessionHolder = sessionHolder;
-	}
-
-	public void setRepositoryHelper(IRepositoryHelper repository) {
-		this.repository = repository;
-	}
+public class ReportGeneratorServiceServer extends ReportGeneratorService {
 
 	/**
 	 * Renders the report for a given query to html
@@ -94,6 +66,7 @@ public class ReportGeneratorService {
 	 * @throws IOException
 	 * @throws ResourceException
 	 */
+    @Override
 	public void renderReportHtml(String sessionId, String templateName, HtmlReport report, Integer acceptedPage) throws ReportException,
 	ModelException, ResourceException {
 
@@ -237,12 +210,11 @@ public class ReportGeneratorService {
 		
 			final ByteArrayOutputStream prptContent = new ByteArrayOutputStream();
 			BundleWriter.writeReportToZipStream(output, prptContent);
-			String solution = "system";
-			String path = "saiku-adhoc/temp";
-            String action = model.getDerivedModels().getSessionId() + ".prpt";
-            
-			repository.writeFile(solution, path, action, prptContent);
-			
+
+			String path =".";
+			String action = model.getDerivedModels().getSessionId() + ".prpt";
+
+			repository.writeLocalFile(path, action, prptContent.toByteArray());
 
 			report.setData(stream.toString());
 
@@ -253,165 +225,30 @@ public class ReportGeneratorService {
 		}
 
 	}
-
-	protected ReportParameterValues getReportParameterValues(
-			SaikuMasterModel model) {
-
-		ReportParameterValues vals = new ReportParameterValues();
-
-		Map<String, Object> reportParameters = ParamUtils.getReportParameters("", model);
-
-		if (null != model) {
-			Collection<String> keyset = reportParameters.keySet();
-			for (Iterator<String> iterator = keyset.iterator(); iterator
-			.hasNext();) {
-				String key = (String) iterator.next();
-				vals.put(key, reportParameters.get(key));
-			}
-		}
-		return vals;
-	}
-
-	private Map<String, Object> getReportParameters(SaikuMasterModel model) {
-
-		Map<String, Object> reportParameters = new HashMap<String, Object>();
-		
-		SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
-		
-		final ArrayList<SaikuParameter> parameters = model.getParameters();
-		for (SaikuParameter saikuParameter : parameters) {
-
-			final String categoryId = saikuParameter.getCategory();
-			final String columnId = saikuParameter.getId();	
-			final String parameterName = "F_" + categoryId + "_" + columnId;
-			
-			if(saikuParameter.getType().equals("String")){
-				ArrayList<String> valueList = saikuParameter.getParameterValues();
-				String[] values = valueList.toArray(new String[valueList.size()]);
-				reportParameters.put(parameterName, values);
-			}
-			if(saikuParameter.getType().equals("Date")){
-				String nameFrom = parameterName + "_FROM";
-				String nameTo = parameterName + "_TO";
-				ArrayList<String> valueList = saikuParameter.getParameterValues();
-				String[] values = valueList.toArray(new String[valueList.size()]);
-				
-				try {
-					reportParameters.put(nameFrom, dateFormat.parse(values[0]));
-					reportParameters.put(nameTo, dateFormat.parse(values[1]));
-					
-				} catch (ParseException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				
-				
-			}
-			
-		}
-		return reportParameters;
-	}
-
-	/**
-	 * Generate the report
-	 * 
-	 * @param output
-	 * @param stream
-	 * @param report 
-	 * @param acceptedPage 
-	 * @param query2
-	 * @throws Exception 
-	 */
+	
+	@Override
 	protected void generateReport(MasterReport output, OutputStream stream,
-			Map<String, Object> reportParameters, HtmlReport report, Integer acceptedPage) throws Exception {
+            Map<String, Object> reportParameters, HtmlReport report, Integer acceptedPage) throws Exception {
 
-	    final SimpleReportingComponent reportComponent = new SimpleReportingComponent();
-	    reportComponent.setReport(output);
-	    reportComponent.setPaginateOutput(true);      
-		reportComponent.setInputs(reportParameters);
-	    reportComponent.setDefaultOutputTarget(HtmlTableModule.TABLE_HTML_PAGE_EXPORT_TYPE);
-	    reportComponent.setOutputTarget(HtmlTableModule.TABLE_HTML_PAGE_EXPORT_TYPE);
-	    reportComponent.setDashboardMode(true);  
-	    reportComponent.setOutputStream(stream);
-	    reportComponent.setAcceptedPage(acceptedPage);  
-	
-	    reportComponent.validate();  
-	    reportComponent.execute();
+        final SaikuReportingComponent reportComponent = new SaikuReportingComponent();
+        reportComponent.setReport(output);
+        reportComponent.setPaginateOutput(true);      
+        reportComponent.setInputs(reportParameters);
+        reportComponent.setDefaultOutputTarget(HtmlTableModule.TABLE_HTML_PAGE_EXPORT_TYPE);
+        reportComponent.setOutputTarget(HtmlTableModule.TABLE_HTML_PAGE_EXPORT_TYPE);
+        reportComponent.setDashboardMode(true);  
+        reportComponent.setOutputStream(stream);
+        reportComponent.setAcceptedPage(acceptedPage);  
+    
+       // reportComponent.validate();  
+        reportComponent.execute();
 
-	    report.setCurrentPage(reportComponent.getAcceptedPage());
-	    report.setPageCount(reportComponent.getPageCount());
-	 
+        report.setCurrentPage(reportComponent.getAcceptedPage());
+        report.setPageCount(reportComponent.getPageCount());
+     
 
-	     
-	}
+         
+    }
 
-	protected void ensureSaikuPreProcessorIsRemoved(final AbstractReportDefinition element) {
-
-		final ReportPreProcessor[] oldProcessors = element.getPreProcessors();
-		
-		ArrayList<ReportPreProcessor> newProcessors = new ArrayList<ReportPreProcessor>();
-
-		for (int i = 0; i < oldProcessors.length; i++)
-		{
-			ReportPreProcessor processor = oldProcessors[i];
-			if (!(processor instanceof SaikuAdhocPreProcessor  || processor instanceof WizardProcessor))
-			{
-				newProcessors.add(processor);
-			}
-		}
-		
-		final ReportPreProcessor[] array = newProcessors.toArray(new ReportPreProcessor[newProcessors.size()]);
-		element.setAttribute(AttributeNames.Internal.NAMESPACE, AttributeNames.Internal.PREPROCESSORS, array);
-
-	}
-
-
-	protected static void ensureSaikuPreProcessorIsAdded(final AbstractReportDefinition element,
-			SaikuMasterModel model)
-	{
-		final ReportPreProcessor[] processors = element.getPreProcessors();
-		boolean hasSaikuProcessor = false;
-		for (int i = 0; i < processors.length; i++)
-		{
-			final ReportPreProcessor processor = processors[i];
-			if (processor instanceof SaikuAdhocPreProcessor)
-			{
-				hasSaikuProcessor = true;
-				//Set the model on the processor
-				((SaikuAdhocPreProcessor) processor).setSaikuMasterModel(model);
-
-			}
-		}
-		if (!hasSaikuProcessor)
-		{
-			//Add a new processor with the current model
-			final SaikuAdhocPreProcessor processor = new SaikuAdhocPreProcessor();
-			processor.setSaikuMasterModel(model);
-			element.addPreProcessor(processor);
-		}
-	}
-	
-	protected static void ensureHasOverrideWizardFormatting(
-			AbstractReportDefinition reportTemplate, 
-			DefaultFlowController flowController) {
-		
-		final StructureFunction[] structureFunctions = reportTemplate.getStructureFunctions();
-		
-		boolean hasOverrideWizardFormatting = false;
-		
-		for (int i = 0; i < structureFunctions.length; i++) {
-			final StructureFunction structureFunction = structureFunctions[i];
-			if(structureFunction instanceof WizardOverrideFormattingFunction){
-				hasOverrideWizardFormatting = false;
-				break;
-			}
-		}
-		if(!hasOverrideWizardFormatting){
-			reportTemplate.addStructureFunction(new WizardOverrideFormattingFunction());
-		}
-				
-		
-	}
-	 
 
 }

@@ -71,7 +71,7 @@ public class LocalCDA {
 
         // query info 
         
-        queryOptions.setOutputType(inputsGetString(inputs, "outputType", "resultset"));
+        queryOptions.setOutputType(inputsGetString(inputs, "outputType", "json"));
         queryOptions.setDataAccessId(inputsGetString(inputs, "dataAccessId", "<blank>"));
         queryOptions.setOutputIndexId(inputsGetInteger(inputs, "outputIndexId", 1));
         
@@ -112,7 +112,7 @@ public class LocalCDA {
           } else if (param.startsWith("setting")) {
             queryOptions.addSetting(param.substring(7), inputsGetString(inputs, param, ""));
           }
-          queryOptions.setOutputType("json");
+          //queryOptions.setOutputType("json");
         }
         try {
             engine.doQuery(out, cdaSettings, queryOptions);

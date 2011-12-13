@@ -54,10 +54,10 @@ import org.saiku.adhoc.service.repository.IMetadataService;
  */
 public class EditorService {
 	
-	private Log log = LogFactory.getLog(EditorService.class);
+	protected Log log = LogFactory.getLog(EditorService.class);
 
-	private WorkspaceSessionHolder sessionHolder;
-	private IMetadataService metadataService;
+	protected WorkspaceSessionHolder sessionHolder;
+	protected IMetadataService metadataService;
 
 	public void setSessionHolder(WorkspaceSessionHolder sessionHolder) {
 		this.sessionHolder = sessionHolder;

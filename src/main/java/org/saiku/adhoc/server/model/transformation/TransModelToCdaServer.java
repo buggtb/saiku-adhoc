@@ -18,35 +18,30 @@
  *
  */
 
-package org.saiku.adhoc.model.transformation;
+package org.saiku.adhoc.server.model.transformation;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import org.pentaho.metadata.model.LogicalColumn;
-import org.pentaho.metadata.model.concept.types.DataType;
-import org.pentaho.metadata.query.model.Parameter;
 import org.pentaho.metadata.query.model.Query;
-import org.pentaho.metadata.query.model.Selection;
 import org.pentaho.metadata.query.model.util.QueryXmlHelper;
 import org.saiku.adhoc.exceptions.ModelException;
-import org.saiku.adhoc.model.master.SaikuColumn;
 import org.saiku.adhoc.model.master.SaikuMasterModel;
 import org.saiku.adhoc.model.master.SaikuParameter;
+import org.saiku.adhoc.model.transformation.TransModelToCda;
 import org.saiku.adhoc.utils.XmlUtils;
 
 import pt.webdetails.cda.connections.Connection;
 import pt.webdetails.cda.connections.metadata.MetadataConnection;
 import pt.webdetails.cda.dataaccess.AbstractDataAccess;
-import pt.webdetails.cda.dataaccess.ColumnDefinition;
 import pt.webdetails.cda.dataaccess.DataAccess;
 import pt.webdetails.cda.dataaccess.MqlDataAccess;
 import pt.webdetails.cda.settings.CdaSettings;
 
-public class TransModelToCda {
+public class TransModelToCdaServer extends TransModelToCda{
 
 	public CdaSettings doIt(SaikuMasterModel smm) throws ModelException {
 
@@ -59,7 +54,8 @@ public class TransModelToCda {
 
 			String[] domainInfo = smm.getDerivedModels().getDomain().getId()
 					.split("/");
-			Connection connection = new MetadataConnection("1", domainInfo[0],
+
+			Connection connection = new MetadataConnection("1", domainInfo[0]+"/"+domainInfo[1],
 					domainInfo[1]);
 			DataAccess dataAccess = new MqlDataAccess(sessionId, sessionId,
 					"1", "");
@@ -149,45 +145,6 @@ public class TransModelToCda {
 		}
 
 		return cda;
-	}
-
-	protected Collection<ColumnDefinition> getCdaColumns(SaikuMasterModel smm) {
-
-		// TODO: This should work without using the mql columns
-		// should be created directly from the MasterModel
-
-		final Query query = smm.getDerivedModels().getQuery();
-		final int columnCount = query.getSelections().size();
-
-		String locale = "en_En";
-		
-		final Collection<ColumnDefinition> cdaColumns = new ArrayList<ColumnDefinition>();
-
-		for (int i = 0; i < columnCount; i++) {
-			
-			Selection sel = query.getSelections().get(i);
-			ColumnDefinition columnDef = new ColumnDefinition();
-			columnDef.setIndex(i);
-			columnDef.setName(sel.getLogicalColumn().getName(locale));
-			columnDef.setType(ColumnDefinition.TYPE.COLUMN);
-			cdaColumns.add(columnDef);
-			
-		}
-		
-		for (SaikuColumn saikuColumn : smm.getColumns()) {
-			if(!(saikuColumn.getFormula()==null)){
-				ColumnDefinition columnDef = new ColumnDefinition();
-				columnDef.setName(saikuColumn.getName());
-				columnDef.setType(ColumnDefinition.TYPE.CALCULATED_COLUMN);
-				columnDef.setFormula(saikuColumn.getFormula());
-				cdaColumns.add(columnDef);
-			}
-		}
-		
-		//add the calculated columns
-		
-
-		return cdaColumns;
 	}
 
 }
