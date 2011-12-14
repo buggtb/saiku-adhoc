@@ -21,18 +21,17 @@
 package org.saiku.adhoc.service.cda;
 
 import java.io.OutputStream;
-import java.util.Map;
 
-import org.pentaho.platform.api.engine.IContentGenerator;
-import org.pentaho.platform.api.engine.IParameterProvider;
-import org.pentaho.platform.api.engine.IPentahoSession;
 import org.saiku.adhoc.exceptions.CdaException;
 import org.saiku.adhoc.model.WorkspaceSessionHolder;
 import org.saiku.adhoc.model.master.SaikuMasterModel;
+import org.saiku.adhoc.service.report.ReportGeneratorService;
 
 public class ExportService {
 	
 	private WorkspaceSessionHolder sessionHolder;
+	
+	private ReportGeneratorService reportGeneratorService;
 	
 	private ICdaAccessor cdaAccessor;
 
@@ -59,8 +58,18 @@ public class ExportService {
 		return cdaAccessor.doQuery(query, sessionId, "csv");
 		
 	}
+	
+	public void exportPdf(String sessionId, OutputStream output) throws Exception{
+		this.reportGeneratorService.renderReportPdf(sessionId, output);
+	}
 
+	
+	public void setReportGeneratorService(ReportGeneratorService reportGeneratorService) {
+		this.reportGeneratorService = reportGeneratorService;
+	}
 
-
+	public ReportGeneratorService getReportGeneratorService() {
+		return reportGeneratorService;
+	}
 
 }

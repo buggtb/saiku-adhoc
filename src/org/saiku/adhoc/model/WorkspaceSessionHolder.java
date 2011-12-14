@@ -23,12 +23,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.saiku.adhoc.exceptions.QueryException;
 import org.saiku.adhoc.model.master.ReportTemplate;
 import org.saiku.adhoc.model.master.SaikuColumn;
 import org.saiku.adhoc.model.master.SaikuGroup;
 import org.saiku.adhoc.model.master.SaikuMasterModel;
 import org.saiku.adhoc.model.master.SaikuParameter;
 import org.saiku.adhoc.service.SaikuProperties;
+import org.saiku.adhoc.service.repository.IRepositoryHelper;
 
 
 /**
@@ -41,13 +43,18 @@ import org.saiku.adhoc.service.SaikuProperties;
  * 
  */
 public class WorkspaceSessionHolder {
-
+	
+	private IRepositoryHelper repository;
+	
+	private static final String solution = "system";
+	
+	private static final String path = "saiku-adhoc/temp";
+	
 	private Map<String, SaikuMasterModel> models = new HashMap<String, SaikuMasterModel>();
 	
 	public void initSession(SaikuMasterModel masterModel, String sessionId) {
 
 		// TODO: Move and make configurable
-		String solution = "system";
 		String path = "saiku-adhoc/resources/templates/";
 		String name = SaikuProperties.defaultPrptTemplate;
 
@@ -55,6 +62,10 @@ public class WorkspaceSessionHolder {
 
 		models.put(sessionId, masterModel);
 		
+	}
+	
+	public void setRepositoryHelper(IRepositoryHelper repository) {
+		this.repository = repository;
 	}
 
 	public Map<String, SaikuMasterModel> getModels() {
@@ -94,4 +105,19 @@ public class WorkspaceSessionHolder {
 		return string.toString();
 	}
 
+	public void materializeModel(String sessionId) throws QueryException {
+		
+		SaikuMasterModel model = this.getModel(sessionId);
+
+		String action = sessionId + ".cda";
+
+		//Save the cda first
+		try {
+			model.deriveModels();
+			repository.writeFile(solution, path, action, model.getCdaSettings().asXML());
+		} catch (Exception e) {
+			throw new QueryException(e.getMessage());
+		}
+
+	}
 }

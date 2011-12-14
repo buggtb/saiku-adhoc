@@ -46,7 +46,7 @@ var WorkspaceToolbar = Backbone.View.extend({
             $(args.workspace.toolbar.el).find('.button')
                 .addClass('disabled_toolbar');
             $(args.workspace.toolbar.el)
-                .find('.auto,.formula,.toggle_fields,.toggle_sidebar, .export_xls, .export_csv,.cda,.prpt, .report')
+                .find('.auto,.formula,.toggle_fields,.toggle_sidebar, .export_xls, .export_pdf, .export_csv,.cda,.prpt, .report')
                 .removeClass('disabled_toolbar');
         }
     },
@@ -164,6 +164,11 @@ var WorkspaceToolbar = Backbone.View.extend({
     export_csv: function(event) {
         window.location = Settings.REST_URL +
             "/export/" + this.workspace.query.uuid + "/csv";
+    },
+
+    export_pdf: function(event) {
+        window.location.href = Settings.REST_URL +
+            "/export/" + this.workspace.query.uuid + "/pdf";
     },
     
     export_cda: function(event) {

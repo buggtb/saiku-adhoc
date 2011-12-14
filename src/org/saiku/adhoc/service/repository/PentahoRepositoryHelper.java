@@ -41,12 +41,16 @@ import org.pentaho.platform.engine.core.solution.ActionInfo;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.util.messages.LocaleHelper;
+import org.saiku.adhoc.exceptions.QueryException;
 import org.saiku.adhoc.model.dto.FileTree;
 import org.saiku.adhoc.model.master.ReportTemplate;
+import org.saiku.adhoc.model.master.SaikuMasterModel;
 import org.saiku.adhoc.service.PluginConfig;
 
 
 public class PentahoRepositoryHelper implements IRepositoryHelper {
+	
+	private static final String solution = "system";
 	
 	private static final String path = "saiku-adhoc/temp";
 
@@ -248,5 +252,5 @@ public class PentahoRepositoryHelper implements IRepositoryHelper {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	
 }

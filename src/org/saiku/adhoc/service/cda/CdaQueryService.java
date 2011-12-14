@@ -20,16 +20,11 @@
 
 package org.saiku.adhoc.service.cda;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.pentaho.metadata.model.LogicalColumn;
 import org.pentaho.metadata.model.concept.types.DataType;
 import org.saiku.adhoc.exceptions.CdaException;
@@ -39,30 +34,17 @@ import org.saiku.adhoc.model.WorkspaceSessionHolder;
 import org.saiku.adhoc.model.dto.FilterResult;
 import org.saiku.adhoc.model.master.SaikuMasterModel;
 import org.saiku.adhoc.model.master.SaikuParameter;
-import org.saiku.adhoc.service.EditorService;
-import org.saiku.adhoc.service.SaikuProperties;
-import org.saiku.adhoc.service.repository.IRepositoryHelper;
 
 public class CdaQueryService {
 	
 	private Log log = LogFactory.getLog(CdaQueryService.class);
 	
-	private static final String solution = "system";
-	
-	private static final String path = "saiku-adhoc/temp";
-
 	private ICdaAccessor cdaAccessor;
-	
-	private IRepositoryHelper repository;
-	
+
 	private WorkspaceSessionHolder sessionHolder;
 
 	public void setSessionHolder(WorkspaceSessionHolder sessionHolder) {
 		this.sessionHolder = sessionHolder;
-	}
-
-	public void setRepositoryHelper(IRepositoryHelper repository) {
-		this.repository = repository;
 	}
 
 	public void setCdaAccessor(ICdaAccessor cdaAccessor) {
@@ -81,21 +63,10 @@ public class CdaQueryService {
 	 */
 	public String runQuery(String queryName, String sessionId) throws QueryException, CdaException {
 
+		
+		sessionHolder.materializeModel(sessionId);
+		
 		SaikuMasterModel model = sessionHolder.getModel(sessionId);
-
-		String action = sessionId + ".cda";
-
-		//Save the cda first
-		try {
-			model.deriveModels();
-			repository.writeFile(solution, path, action, model.getCdaSettings().asXML());
-		} catch (Exception e) {
-			throw new QueryException(e.getMessage());
-		}
-	
-		if (log.isDebugEnabled()) {
-			log.debug("SERVICE:CdaQueryService " + sessionId + " runQuery\n" + sessionHolder.logModel(sessionId));
-		}
 		
 		//then let cda generate output Json
 		//TODO: We need to remove the group-only columns here
@@ -110,19 +81,10 @@ public class CdaQueryService {
 		
 		model.deriveModels();
 		
-		String action = sessionId + ".cda";
-		
-		//Save the cda first
-		try {
-			model.deriveModels();
-			repository.writeFile(solution, path, action, model.getCdaSettings().asXML());
-		} catch (Exception e) {
-			throw new QueryException(e.getMessage());
-		}
-		
+		sessionHolder.materializeModel(sessionId);
+
 		LogicalColumn column = model.getDerivedModels().getQuery().getLogicalModel().findLogicalColumn(columnId);
 
-		//
 		String filterKey = categoryId + "." + columnId; 
 		
 		ArrayList<String> selectedValues = null;
@@ -156,5 +118,5 @@ public class CdaQueryService {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	
 }

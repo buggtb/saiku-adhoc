@@ -1372,6 +1372,9 @@ table th.string {
 .workspace_toolbar .export_csv {
     background-position: -455px 7px;
 }
+.workspace_toolbar .export_pdf {
+    background-position: -390px 7px;
+}
 .workspace_toolbar .export_xls {
     background-position: -847px 7px;
 }
@@ -1391,9 +1394,15 @@ table th.string {
   /* this isn't in the sprite */
 }
 
-.workspace_toolbar .report {
-    background: url('../../../images/src/report.png') 50% 50% no-repeat;
+.workspace_toolbar .view {
+    background: url('../../../images/src/report-view.png') 50% 50% no-repeat;
 }
+
+.workspace_toolbar .view.table {
+    background: url('../../../images/src/table-view.png') 50% 50% no-repeat !important;
+}
+
+
 .workspace_toolbar .union {
     background: url('../../../images/src/union.png') 50% 50% no-repeat;
 }

@@ -33,10 +33,14 @@
 	</bean>
 
 	<!-- beans -->
-	<bean id="sessionHolder" class="org.saiku.adhoc.model.WorkspaceSessionHolder"></bean>
+	<bean id="sessionHolder" class="org.saiku.adhoc.model.WorkspaceSessionHolder">
+			<property name="repositoryHelper" ref="repositoryHelper" />
+	</bean>
 	<bean id="repositoryHelper"
-		class="org.saiku.adhoc.service.repository.PentahoRepositoryHelper"></bean>
+		class="org.saiku.adhoc.service.repository.PentahoRepositoryHelper">
+		</bean>
 	<bean id="cdaAccessor" class="org.saiku.adhoc.service.cda.PentahoCdaAccessor"></bean>
+
 
 	<!-- services -->
 	<bean id="metadataService"
@@ -46,7 +50,6 @@
 
 	<bean id="queryService" class="org.saiku.adhoc.service.cda.CdaQueryService">
 		<property name="sessionHolder" ref="sessionHolder" />
-		<property name="repositoryHelper" ref="repositoryHelper" />
 		<property name="cdaAccessor" ref="cdaAccessor" />
 	</bean>
 
@@ -63,6 +66,7 @@
 	<bean id="exportService" class="org.saiku.adhoc.service.cda.ExportService">
 		<property name="sessionHolder" ref="sessionHolder" />
 		<property name="cdaAccessor" ref="cdaAccessor" />
+		<property name="reportGeneratorService" ref="reportGeneratorService" />
 	</bean>
 
 	<!-- resources -->

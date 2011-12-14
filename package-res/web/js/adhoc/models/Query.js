@@ -17,6 +17,9 @@ var Query = Backbone.Model.extend({
                 return v.toString(16);
             }).toUpperCase();
             
+            
+        this.reportPerspective = true;
+        
         this.action = new QueryAction({}, { query: this });
         this.result = new Result({}, { query: this });
 
@@ -49,13 +52,16 @@ var Query = Backbone.Model.extend({
             return;
         }
 
-	this.result.fetch();
+		Application.ui.block("Rendering Report");
 
-    Application.ui.block("Rendering Report");
+	//this has to be the other way round
+		if(this.reportPerspective){
+			this.reportresult.fetch();
+		}else{
+			this.result.fetch();
+		}
 
-	this.reportresult.fetch();
-
-    },
+   },
     
     move_dimension: function(dimension, $target_el, index) {
         $(this.workspace.el).find('.run').removeClass('disabled_toolbar');

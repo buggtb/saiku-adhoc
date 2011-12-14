@@ -8,6 +8,7 @@ var Settings = {
     MODELS_PREFETCH: true,
     BIPLUGIN: true,
     HIDE_ERRORS: false,
+    START_WITH_REPORT: true,
     QUERY_PROPERTIES: {
         'saiku.adhoc.query.automatic_execution': 'true'
     },

@@ -96,6 +96,41 @@ public class ExportResource {
 		};
 
 	}
+	
+	@GET
+	@Produces({ "application/vnd.pdf" })
+	@Path("/{queryname}/pdf")
+	public StreamingOutput exportPdf(
+			@PathParam("queryname") final String queryName)
+	throws CdaException {
+
+		return new StreamingOutput() {
+			public void write(OutputStream output) throws IOException,
+			WebApplicationException {
+				try {
+
+					if (log.isDebugEnabled()) {
+						log.debug("REST:GET "+ queryName + " exportXls");
+					}
+					
+					exportService.exportPdf(queryName, output);
+					
+//					BufferedWriter bw = new BufferedWriter(new PrintWriter(
+//							output));
+//
+//					try {
+//						bw.write(exportService.exportXls(queryName));
+//						bw.flush();
+//					} catch (IOException e) {
+//						e.printStackTrace();
+//					}
+				} catch (Exception e) {
+					throw new WebApplicationException(e);
+				}
+			}
+		};
+
+	}
 
 	@GET
 	@Produces({ "text/csv" })

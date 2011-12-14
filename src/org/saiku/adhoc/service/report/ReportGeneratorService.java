@@ -47,6 +47,7 @@ import org.pentaho.reporting.engine.classic.core.cache.CachingDataFactory;
 import org.pentaho.reporting.engine.classic.core.function.ProcessingContext;
 import org.pentaho.reporting.engine.classic.core.function.StructureFunction;
 import org.pentaho.reporting.engine.classic.core.layout.output.DefaultProcessingContext;
+import org.pentaho.reporting.engine.classic.core.modules.output.pageable.pdf.PdfPageableModule;
 import org.pentaho.reporting.engine.classic.core.modules.output.table.html.HtmlTableModule;
 import org.pentaho.reporting.engine.classic.core.modules.parser.bundle.writer.BundleWriter;
 import org.pentaho.reporting.engine.classic.core.modules.parser.bundle.writer.BundleWriterException;
@@ -61,6 +62,7 @@ import org.pentaho.reporting.engine.classic.wizard.model.WizardSpecification;
 import org.pentaho.reporting.libraries.repository.ContentIOException;
 import org.pentaho.reporting.libraries.resourceloader.ResourceException;
 import org.pentaho.reporting.platform.plugin.SimpleReportingComponent;
+import org.pentaho.reporting.platform.plugin.output.PDFOutput;
 import org.saiku.adhoc.exceptions.ModelException;
 import org.saiku.adhoc.exceptions.QueryException;
 import org.saiku.adhoc.exceptions.ReportException;
@@ -105,6 +107,9 @@ public class ReportGeneratorService {
 
 		//html
 		SaikuMasterModel model = sessionHolder.getModel(sessionId);
+
+		sessionHolder.materializeModel(sessionId);
+
 		templateName = templateName.equals("default")? SaikuProperties.defaultPrptTemplate : templateName + ".prpt";
 		ReportTemplate template =  new ReportTemplate("system", "saiku-adhoc/resources/templates", templateName);		
 		model.setReportTemplate(template);
@@ -113,27 +118,37 @@ public class ReportGeneratorService {
 
 		output = processReport(model, output);			
 
-		//		//prpt
-		//		try {
-		//			generatePrptOutput(model, output);
-		//		} catch (BundleWriterException e) {
-		//			// TODO Auto-generated catch block
-		//			e.printStackTrace();
-		//		} catch (ContentIOException e) {
-		//			// TODO Auto-generated catch block
-		//			e.printStackTrace();
-		//		} catch (IOException e) {
-		//			// TODO Auto-generated catch block
-		//			e.printStackTrace();
-		//		}
-
-		//html
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
 
-		generateReport(output, stream, ParamUtils.getReportParameters("", model), report, acceptedPage);
+		generateHtmlReport(output, stream, ParamUtils.getReportParameters("", model), report, acceptedPage);
+
+		report.setData(stream.toString());		
+
+	}
+	
+	/**
+	 * Renders the report for a given query to pdf
+	 * 
+	 * @param sessionId
+	 * @param report 
+	 * @param acceptedPage 
+	 * @param template 
+	 * @return
+	 * @throws Exception 
+	 * @throws IOException
+	 */
+	public void renderReportPdf(String sessionId, OutputStream stream) throws Exception {
 
 		//html
-		report.setData(stream.toString());		
+		SaikuMasterModel model = sessionHolder.getModel(sessionId);
+
+		sessionHolder.materializeModel(sessionId);
+
+		MasterReport output = null;
+
+		output = processReport(model, output);			
+
+		generatePdfReport(output, stream, ParamUtils.getReportParameters("", model));
 
 	}
 
@@ -204,11 +219,14 @@ public class ReportGeneratorService {
 			reportTemplate.setAttribute(AttributeNames.Wizard.NAMESPACE,
 					AttributeNames.Wizard.ENABLE, Boolean.TRUE);
 
+
 			ReportPreProcessor processor = new SaikuAdhocPreProcessor();
 			((SaikuAdhocPreProcessor) processor).setSaikuMasterModel(model);
 			output = processor.performPreProcessing(
 					reportTemplate, postQueryFlowController);
-
+			output.setAttribute(AttributeNames.Wizard.NAMESPACE,
+					AttributeNames.Wizard.ENABLE, Boolean.FALSE);
+			
 			output.setAttribute(AttributeNames.Wizard.NAMESPACE,
 					AttributeNames.Wizard.ENABLE, Boolean.FALSE);	
 
@@ -234,15 +252,7 @@ public class ReportGeneratorService {
 		ensureSaikuPreProcessorIsRemoved(output);
 		BundleWriter.writeReportToZipStream(output, prptContent);
 
-		/*
-		String solution = "system";
-		String path = "saiku-adhoc/temp";
-		String action = model.getDerivedModels().getSessionId() + ".prpt";
-		repository.writeFile(solution, path, action, prptContent);
-		 */
-
 		return prptContent;
-
 	}
 
 	private ReportParameterValues getReportParameterValues(
@@ -263,38 +273,38 @@ public class ReportGeneratorService {
 		return vals;
 	}
 
-	private Map<String, Object> getReportParameters(SaikuMasterModel model) throws ParseException {
-
-		Map<String, Object> reportParameters = new HashMap<String, Object>();
-
-		SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
-
-		final ArrayList<SaikuParameter> parameters = model.getParameters();
-		for (SaikuParameter saikuParameter : parameters) {
-
-			final String categoryId = saikuParameter.getCategory();
-			final String columnId = saikuParameter.getId();	
-			final String parameterName = "F_" + categoryId + "_" + columnId;
-
-			if(saikuParameter.getType().equals("String")){
-				ArrayList<String> valueList = saikuParameter.getParameterValues();
-				String[] values = valueList.toArray(new String[valueList.size()]);
-				reportParameters.put(parameterName, values);
-			}
-			if(saikuParameter.getType().equals("Date")){
-				String nameFrom = parameterName + "_FROM";
-				String nameTo = parameterName + "_TO";
-				ArrayList<String> valueList = saikuParameter.getParameterValues();
-				String[] values = valueList.toArray(new String[valueList.size()]);
-
-				reportParameters.put(nameFrom, dateFormat.parse(values[0]));
-				reportParameters.put(nameTo, dateFormat.parse(values[1]));
-
-			}
-
-		}
-		return reportParameters;
-	}
+//	private Map<String, Object> getReportParameters(SaikuMasterModel model) throws ParseException {
+//
+//		Map<String, Object> reportParameters = new HashMap<String, Object>();
+//
+//		SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+//
+//		final ArrayList<SaikuParameter> parameters = model.getParameters();
+//		for (SaikuParameter saikuParameter : parameters) {
+//
+//			final String categoryId = saikuParameter.getCategory();
+//			final String columnId = saikuParameter.getId();	
+//			final String parameterName = "F_" + categoryId + "_" + columnId;
+//
+//			if(saikuParameter.getType().equals("String")){
+//				ArrayList<String> valueList = saikuParameter.getParameterValues();
+//				String[] values = valueList.toArray(new String[valueList.size()]);
+//				reportParameters.put(parameterName, values);
+//			}
+//			if(saikuParameter.getType().equals("Date")){
+//				String nameFrom = parameterName + "_FROM";
+//				String nameTo = parameterName + "_TO";
+//				ArrayList<String> valueList = saikuParameter.getParameterValues();
+//				String[] values = valueList.toArray(new String[valueList.size()]);
+//
+//				reportParameters.put(nameFrom, dateFormat.parse(values[0]));
+//				reportParameters.put(nameTo, dateFormat.parse(values[1]));
+//
+//			}
+//
+//		}
+//		return reportParameters;
+//	}
 
 	/**
 	 * Generate the report
@@ -306,7 +316,7 @@ public class ReportGeneratorService {
 	 * @param query2
 	 * @throws Exception 
 	 */
-	private void generateReport(MasterReport output, OutputStream stream,
+	private void generateHtmlReport(MasterReport output, OutputStream stream,
 			Map<String, Object> reportParameters, HtmlReport report, Integer acceptedPage) throws Exception{
 
 		final SimpleReportingComponent reportComponent = new SimpleReportingComponent();
@@ -326,6 +336,32 @@ public class ReportGeneratorService {
 
 		report.setCurrentPage(reportComponent.getAcceptedPage());
 		report.setPageCount(reportComponent.getPageCount());
+
+	}
+	
+	/**
+	 * Generate the report
+	 * 
+	 * @param output
+	 * @param stream
+	 * @param report 
+	 * @param acceptedPage 
+	 * @param query2
+	 * @throws Exception 
+	 */
+	private void generatePdfReport(MasterReport output, OutputStream stream,
+			Map<String, Object> reportParameters) throws Exception{
+
+		final SimpleReportingComponent reportComponent = new SimpleReportingComponent();
+		reportComponent.setReport(output);
+		reportComponent.setPaginateOutput(true);      
+		reportComponent.setInputs(reportParameters);
+		reportComponent.setDefaultOutputTarget(PdfPageableModule.PDF_EXPORT_TYPE);
+		reportComponent.setOutputTarget(PdfPageableModule.PDF_EXPORT_TYPE);
+		reportComponent.setOutputStream(stream);
+
+		reportComponent.validate();  
+		reportComponent.execute();
 
 	}
 
