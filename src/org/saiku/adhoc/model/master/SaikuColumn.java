@@ -61,9 +61,12 @@ public class SaikuColumn {
 	private String sort;
 	
 	private boolean forGroupOnly;
+
+	private boolean hideRepeating;
 	
 	public SaikuColumn() {
 		this.forGroupOnly = false;
+		this.hideRepeating = false;
 		this.sort = "NONE";
 	}
 
@@ -234,6 +237,14 @@ public class SaikuColumn {
 
 	public String getFormula() {
 		return formula;
+	}
+
+	public void setHideRepeating(boolean hideRepeating) {
+		this.hideRepeating = hideRepeating;
+	}
+
+	public boolean isHideRepeating() {
+		return hideRepeating;
 	}
 
 }

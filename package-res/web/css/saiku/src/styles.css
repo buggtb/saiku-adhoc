@@ -1112,6 +1112,23 @@ table th.string {
 	display: none;
 }
 
+}
+.dialog_columnconfig .dialog_body {
+    padding-left: 5px;
+    float: left;
+}
+/*
+.dialog_selections .dialog_body .selection_buttons {
+    float: left;
+    padding-left: 25px;
+    padding-top: 115px;
+    text-align: center;
+    vertical-align: middle;
+}
+*/
+
+
+
 .editor label.button{
     display: block;
     height: 12px;

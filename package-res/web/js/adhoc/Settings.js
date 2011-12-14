@@ -61,11 +61,11 @@ var AggTypes = {
    "MAXIMUM" : "Maximum"
 }
 
-var CalculatedColumnDefault =
-{"name":"calculated",
+var defaultCalcColumn =
+{"name":"Calculated Column",
 "id":"NEW",
 "description":"",
-"formula" : "=()",
+"formula" : "=\"Hello World\"",
 "category":"CALCULATED",
 "sort":"NONE",
 "fieldType":"",
@@ -79,11 +79,18 @@ var CalculatedColumnDefault =
 	"backgroundColor":null,
 	"fontSize":10
 	},
+"columnHeaderFormat":
+	{"horizontalAlignment":"LEFT",
+	"verticalAlignment":"CENTER",
+	"fontName":"Arial",
+	"fontColor":"#662b1b",
+	"backgroundColor":null,
+	"fontSize":10
+	},
 "aggTypes":["NONE"],
 "selectedAggType":"NONE",
 "formatMask":null,
 "forGroupOnly":false,
-"columnHeaderFormat":null,
 "selectedSummaryType":"NONE"
 };
 

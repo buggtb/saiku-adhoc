@@ -304,7 +304,7 @@
         </script>
         
         <script type="text/x-jquery-tmpl" id="template-column-setup">
-        	<div style="text-align:center">
+        	<div>
             <div id="displayname"> 
             	Display Name:<br/>
             	<input id="name">
@@ -319,6 +319,9 @@
             	<input id="formatMask" disabled>
                 </input>
             </div>    
+            <div>
+                <input name="show_unique" id="show_unique" type="checkbox" /><label for="show_unique">Hide Repeating Values</label>
+            </div>
             <div id="aggregation"> 
             	Aggregation:<br/>
             	<select id="selectedAggType">

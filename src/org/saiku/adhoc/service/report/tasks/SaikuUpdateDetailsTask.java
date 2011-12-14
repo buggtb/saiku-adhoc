@@ -6,6 +6,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.reporting.engine.classic.core.AttributeNames;
 import org.pentaho.reporting.engine.classic.core.ReportElement;
+import org.pentaho.reporting.engine.classic.core.function.FormulaExpression;
+import org.pentaho.reporting.engine.classic.core.style.ElementStyleKeys;
 import org.saiku.adhoc.model.master.SaikuColumn;
 import org.saiku.adhoc.model.master.SaikuElementFormat;
 import org.saiku.adhoc.model.master.SaikuMasterModel;
@@ -55,7 +57,14 @@ public class SaikuUpdateDetailsTask implements UpdateTask {
 		
 		TemplateUtils.mergeElementFormats(e.getStyle(), tempFormat);
 		
-		model.getDerivedModels().getRptIdToElementFormat().put(rptId, tempFormat);
+		//<style-expression style-key="visible" formula="=HASCHANGED(&quot;ID&quot;)"/>
+	    if(saikuColumn.isHideRepeating()){
+	    	FormulaExpression expression = new FormulaExpression();
+		    expression.setFormula("=HASCHANGED(\""+ saikuColumn.getName() +"\")");
+			e.setStyleExpression(ElementStyleKeys.VISIBLE, expression);	
+	    }
+
+	    model.getDerivedModels().getRptIdToElementFormat().put(rptId, tempFormat);
 		
 	}
 

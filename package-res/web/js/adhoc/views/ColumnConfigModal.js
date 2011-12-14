@@ -38,7 +38,11 @@ var ColumnConfigModal = Modal.extend({
       if(!(this.category == 'CALCULATED' && this.column == 'NEW')){
       	this.fetch_values();
       }else{
-      	this.json = CalculatedColumnDefault;
+      	
+      	var temp = defaultCalcColumn;
+      	
+      	this.json = $.extend(true, {}, defaultCalcColumn);
+
       	this.populate();
       }
 
@@ -114,7 +118,11 @@ var ColumnConfigModal = Modal.extend({
 
     	this.json.selectedAggType = $(this.el).find('#aggregation select').val();   
     	this.json.selectedSummaryType = $(this.el).find('#summary select').val();  
-    	this.json.elementFormat.horizontalAlignment = $(this.el).find('#alignment select').val();   
+
+
+    	this.json.hideRepeating = $(this.el).find('#show_unique').is(':checked');  
+    	
+    	//this.json.elementFormat.horizontalAlignment = $(this.el).find('#alignment select').val();   
     	
  		if(this.json.uid == null) this.json.uid = this.workspace.uniqueId('rpt-dtl-');
     	
