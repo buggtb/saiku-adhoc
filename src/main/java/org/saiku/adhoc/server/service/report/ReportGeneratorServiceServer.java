@@ -45,6 +45,7 @@ import org.saiku.adhoc.exceptions.ReportException;
 import org.saiku.adhoc.model.dto.HtmlReport;
 import org.saiku.adhoc.model.master.ReportTemplate;
 import org.saiku.adhoc.model.master.SaikuMasterModel;
+import org.saiku.adhoc.server.datasource.IPRPTManager;
 import org.saiku.adhoc.server.reporting.SaikuReportingComponent;
 import org.saiku.adhoc.service.SaikuProperties;
 import org.saiku.adhoc.service.report.ReportGeneratorService;
@@ -53,7 +54,9 @@ import org.saiku.adhoc.utils.ParamUtils;
 
 public class ReportGeneratorServiceServer extends ReportGeneratorService {
 
-	/**
+	private IPRPTManager prptManager;
+
+    /**
 	 * Renders the report for a given query to html
 	 * 
 	 * @param sessionId
@@ -74,7 +77,7 @@ public class ReportGeneratorServiceServer extends ReportGeneratorService {
 
 		templateName = templateName.equals("default")? SaikuProperties.defaultPrptTemplate : templateName + ".prpt";
 		
-		ReportTemplate template =  new ReportTemplate("system", "saiku-adhoc/resources/templates", templateName);
+		ReportTemplate template =  this.prptManager.getDatasource(templateName);
 		
 		model.setReportTemplate(template);
 		
@@ -250,5 +253,14 @@ public class ReportGeneratorServiceServer extends ReportGeneratorService {
          
     }
 
+	
+    public void setPRPTManager(IPRPTManager manager){
+        this.prptManager = manager;
+        
+    }
+
+    public IPRPTManager getPRPTManager(){
+        return prptManager;
+    }
 
 }

@@ -27,7 +27,7 @@ public class MemoryBasedRepository {
     private void createDomain(){
         FileInputStream in = null;
         try {
-            in = new FileInputStream("/Users/tombarber/Projects/saiku-adhoc/src/main/java/org/saiku/adhoc/server/repository/metadata.xmi");
+            in = new FileInputStream("metadata.xmi");
         } catch (FileNotFoundException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

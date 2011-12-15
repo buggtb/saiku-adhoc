@@ -45,7 +45,7 @@ public class PentahoCdaAccessorServer extends PentahoCdaAccessor {
 
         Map<String, Object> params = new HashMap<String, Object>();
 
-        String path = model.getCdaPath();
+        String path = model.getCda().getPath();
         String daId = id;
 
         params.put("path", path);

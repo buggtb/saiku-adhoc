@@ -32,6 +32,7 @@ import org.pentaho.metadata.model.LogicalModel;
 import org.saiku.adhoc.exceptions.ModelException;
 import org.saiku.adhoc.model.master.SaikuMasterModel;
 import org.saiku.adhoc.model.metadata.impl.MetadataModelInfo;
+import org.saiku.adhoc.server.datasource.ICDAManager;
 import org.saiku.adhoc.server.model.SaikuMasterModelServer;
 import org.saiku.adhoc.service.EditorService;
 
@@ -41,7 +42,16 @@ import org.saiku.adhoc.service.EditorService;
  */
 public class EditorServiceServer extends EditorService {
 	
+    private ICDAManager cdaManager;
 
+    public void setCDAManager(ICDAManager manager){
+        this.cdaManager = manager;
+        
+    }
+
+    public ICDAManager getCDAManager(){
+        return cdaManager;
+    }
 	
 	@Override
 	public void createNewModel(String sessionId, MetadataModelInfo modelInfo)
@@ -57,7 +67,7 @@ public class EditorServiceServer extends EditorService {
 					modelInfo.getModelId());
 						
 			masterModel = new SaikuMasterModelServer();
-			masterModel.init(domain, model, sessionId);
+			masterModel.init(domain, model, sessionId, cdaManager);
 		}else{
 			ObjectMapper mapper = new ObjectMapper();
 			masterModel = mapper.readValue(modelInfo.getJson(), SaikuMasterModelServer.class);
@@ -68,7 +78,7 @@ public class EditorServiceServer extends EditorService {
 			Domain domain = metadataService.getDomain(domainId);
 			LogicalModel model = metadataService.getLogicalModel(domainId, split[1]);
 			
-			masterModel.init(domain, model, sessionId);
+			masterModel.init(domain, model, sessionId, cdaManager);
 			masterModel.deriveModels();
 		}
 		

@@ -176,8 +176,9 @@ public class SaikuReportingComponent {
             }
             synchronized (reportOutputHandler.getReportLock()) {
                 try {
-                    return reportOutputHandler.generate(report, acceptedPage, outputStream, getYieldRate());
-                } finally {
+                    pageCount = reportOutputHandler.generate(report, acceptedPage, outputStream, getYieldRate());
+                    return pageCount != -1;
+                    } finally {
                     reportOutputHandler.close();
                 }
             }

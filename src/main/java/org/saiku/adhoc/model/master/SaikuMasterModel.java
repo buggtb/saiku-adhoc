@@ -36,6 +36,8 @@ import org.saiku.adhoc.model.transformation.TransModelToParams;
 import org.saiku.adhoc.model.transformation.TransModelToQuery;
 import org.saiku.adhoc.model.transformation.TransModelToReport;
 import org.saiku.adhoc.model.transformation.TransModelToWizard;
+import org.saiku.adhoc.server.datasource.ICDAManager;
+import org.saiku.adhoc.server.datasource.SaikuCDA;
 import org.saiku.adhoc.service.SaikuProperties;
 
 import pt.webdetails.cda.settings.CdaSettings;
@@ -295,4 +297,13 @@ public class SaikuMasterModel {
 		return reportFooterMessages;
 	}
 
+	public SaikuCDA getCda(){
+	    return null;
+	}
+
+
+    public void init(Domain domain, LogicalModel model, String sessionId, ICDAManager cdaManager) throws ModelException {
+        // Empty class for SaikuMasterModelServer
+        
+    }
 }

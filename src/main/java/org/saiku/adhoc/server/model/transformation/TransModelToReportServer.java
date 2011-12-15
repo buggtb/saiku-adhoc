@@ -44,7 +44,7 @@ public class TransModelToReportServer extends TransModelToReport{
 		final SimpleReportingComponent reportComponent = new SimpleReportingComponent();
 
         FileInputStream in = null;
-        in = new FileInputStream("/Users/tombarber/Projects/saiku-adhoc/winter.prpt");
+        in = new FileInputStream(fullPath);
 		reportComponent.setReportDefinitionInputStream(in);
 		final MasterReport reportTemplate = reportComponent.getReport();
 		DefaultParameterDefinition paramDef = new DefaultParameterDefinition();

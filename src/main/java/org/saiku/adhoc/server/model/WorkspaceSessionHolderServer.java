@@ -27,8 +27,10 @@ import org.saiku.adhoc.model.WorkspaceSessionHolder;
 import org.saiku.adhoc.model.master.ReportTemplate;
 import org.saiku.adhoc.model.master.SaikuColumn;
 import org.saiku.adhoc.model.master.SaikuGroup;
+import org.saiku.adhoc.model.master.SaikuMasterModel;
 import org.saiku.adhoc.model.master.SaikuParameter;
-import org.saiku.adhoc.service.SaikuProperties;
+import org.saiku.adhoc.server.datasource.IPRPTManager;
+import org.saiku.adhoc.server.model.master.ReportTemplateServer;
 
 
 /**
@@ -43,36 +45,43 @@ import org.saiku.adhoc.service.SaikuProperties;
 public class WorkspaceSessionHolderServer extends WorkspaceSessionHolder{
 
     
-	private Map<String, SaikuMasterModelServer> models = new HashMap<String, SaikuMasterModelServer>();
+	private Map<String, SaikuMasterModel> models = new HashMap<String, SaikuMasterModel>();
+    private IPRPTManager prptManager;
 	
-	public void initSession(SaikuMasterModelServer masterModel, String sessionId) {
+    @Override
+	public void initSession(SaikuMasterModel masterModel, String sessionId) {
 
 		// TODO: Move and make configurable && plugin
-		String solution = "system";
-		String path = "/Users/tombarber/Projects/saiku-adhoc/";
-		String name = SaikuProperties.defaultPrptTemplate;
-
-		masterModel.setReportTemplate(new ReportTemplate(solution, path, name));
+		ReportTemplate template = prptManager.getDatasources().values().toArray(new ReportTemplateServer[]{})[0];
+		
+		masterModel.setReportTemplate(template);
 
 		models.put(sessionId, masterModel);
 		
 	}
 
+    public void setPRPTManager(IPRPTManager manager){
+        this.prptManager = manager;
+        
+    }
+
+    public IPRPTManager getPRPTManager(){
+        return prptManager;
+    }
+    
 	public Map getModels() {
 		return models;
 	}
 
-	@Override
-	public SaikuMasterModelServer getModel(String sessionId) {
+	public SaikuMasterModel getModel(String sessionId) {
 		return models.get(sessionId);
 	}
 
-	@Override
 	public String logModel(String sessionId) {
 
 		StringBuffer string = new StringBuffer();
 
-		final SaikuMasterModelServer smm = models.get(sessionId);
+		final SaikuMasterModel smm = models.get(sessionId);
 		
 		string.append("\nMASTER-MODEL\nCOLUMNS:\n");
 		

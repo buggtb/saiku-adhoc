@@ -41,6 +41,8 @@ import org.saiku.adhoc.model.transformation.TransModelToParams;
 import org.saiku.adhoc.model.transformation.TransModelToQuery;
 import org.saiku.adhoc.model.transformation.TransModelToReport;
 import org.saiku.adhoc.model.transformation.TransModelToWizard;
+import org.saiku.adhoc.server.datasource.ICDAManager;
+import org.saiku.adhoc.server.datasource.SaikuCDA;
 import org.saiku.adhoc.server.model.transformation.TransModelToCdaServer;
 import org.saiku.adhoc.server.model.transformation.TransModelToReportServer;
 
@@ -49,9 +51,22 @@ import pt.webdetails.cda.settings.CdaSettings;
 public class SaikuMasterModelServer extends SaikuMasterModel {
 
 
-	public void init(Domain domain, LogicalModel model, String sessionId) throws ModelException{
+    private ICDAManager cdaManager;
 
-		this.derivedModels = new DerivedModelsCollectionServer(sessionId, domain, model);
+    public void setCDAManager(ICDAManager manager){
+        this.cdaManager = manager;
+        
+    }
+
+    public ICDAManager getCDAManager(){
+        return cdaManager;
+    }
+    
+    @Override
+	public void init(Domain domain, LogicalModel model, String sessionId, ICDAManager manager) throws ModelException{
+
+	    this.cdaManager = manager;
+		this.derivedModels = new DerivedModelsCollectionServer(sessionId, domain, model, this.cdaManager);
 		derivedModels.init();
 		
 		this.settings = new SaikuReportSettings();
@@ -81,14 +96,15 @@ public class SaikuMasterModelServer extends SaikuMasterModel {
 		
 	}
 
-	@JsonIgnore
 	@Override
-	public String getCdaPath() {
-		String path = ".";
+	@JsonIgnore
+	public SaikuCDA getCda() {
 	 
 		String action = this.derivedModels.getSessionId() + ".cda";
 
-		return path + "/" + action;
+		
+		
+		return cdaManager.getDatasource(action);
 		}
 
 	@Override

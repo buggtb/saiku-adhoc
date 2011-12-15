@@ -43,6 +43,8 @@ import org.saiku.adhoc.model.master.ReportTemplate;
 import org.saiku.adhoc.model.metadata.impl.MetadataModel;
 import org.saiku.adhoc.model.metadata.impl.MetadataModelInfo;
 import org.saiku.adhoc.model.metadata.impl.ModelInfoComparator;
+import org.saiku.adhoc.server.datasource.ClassPathResourcePRPTManager;
+import org.saiku.adhoc.server.datasource.IPRPTManager;
 import org.saiku.adhoc.server.repository.MemoryBasedRepository;
 import org.saiku.adhoc.service.repository.IMetadataService;
 import org.saiku.adhoc.service.repository.IRepositoryHelper;
@@ -69,6 +71,8 @@ public class ServerMetadataService extends PentahoBase implements IMetadataServi
     protected IRepositoryHelper repositoryHelper;
 	
     MemoryBasedRepository mbr;
+
+    private IPRPTManager prptManager;
 	
 	public ServerMetadataService() {
 	    super();
@@ -268,5 +272,6 @@ public class ServerMetadataService extends PentahoBase implements IMetadataServi
     public void setRepositoryHelper(IRepositoryHelper repositoryHelper) {
         this.repositoryHelper = repositoryHelper;
     }
+    
 
 }

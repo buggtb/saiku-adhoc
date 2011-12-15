@@ -28,6 +28,9 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -44,8 +47,12 @@ import org.pentaho.platform.util.messages.LocaleHelper;
 import org.saiku.adhoc.model.dto.Directory;
 import org.saiku.adhoc.model.dto.FileTree;
 import org.saiku.adhoc.model.master.ReportTemplate;
+import org.saiku.adhoc.server.datasource.ClassPathResourcePRPTManager;
+import org.saiku.adhoc.server.datasource.IPRPTManager;
+import org.saiku.adhoc.server.model.master.ReportTemplateServer;
 import org.saiku.adhoc.service.PluginConfig;
 import org.saiku.adhoc.service.repository.IRepositoryHelper;
+import org.springframework.core.io.ClassPathResource;
 
 public class ServerRepositoryHelper implements IRepositoryHelper {
 
@@ -53,6 +60,17 @@ public class ServerRepositoryHelper implements IRepositoryHelper {
 
 	private static final String ENCODING = "UTF-8";
 
+    private IPRPTManager prptManager;
+
+    public void setPRPTManager(IPRPTManager manager){
+        this.prptManager = manager;
+        
+    }
+
+    public IPRPTManager getPRPTManager(){
+        return prptManager;
+    }
+    
 	@Override
 	public boolean writeFile(String solution, String path, String action,
 			String contents) {
@@ -194,14 +212,10 @@ public class ServerRepositoryHelper implements IRepositoryHelper {
 	public ReportTemplate[] getTemplateList(final IPentahoSession userSession) {
 		log.debug("Getting template list");
 
-		ArrayList<ReportTemplate> templates = new ArrayList<ReportTemplate>();
 
-		File templateDir = new File("./");
-		for (String entry : templateDir.list(new PrptFilter())) {
-            templates.add(new ReportTemplate("",
-                    "./", entry));
-        }
-		return templates.toArray(new ReportTemplate[templates.size()]);
+		Map<String, ReportTemplate> datasources = prptManager.getDatasources();
+        return datasources.values().toArray(new ReportTemplateServer[]{});
+
 
 	}
 

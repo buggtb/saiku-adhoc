@@ -77,6 +77,8 @@ this.logicalModel = model;
 
 }
 
+public DerivedModelsCollection(){
+}
 public void init() throws ModelException{
     
   //init all the stuff

@@ -34,6 +34,7 @@ import org.pentaho.reporting.engine.classic.extensions.datasources.cda.CdaDataFa
 import org.pentaho.reporting.engine.classic.wizard.model.DefaultWizardSpecification;
 import org.saiku.adhoc.exceptions.ModelException;
 import org.saiku.adhoc.model.master.DerivedModelsCollection;
+import org.saiku.adhoc.server.datasource.ICDAManager;
 
 import pt.webdetails.cda.connections.Connection;
 import pt.webdetails.cda.connections.metadata.MetadataConnection;
@@ -43,14 +44,20 @@ import pt.webdetails.cda.settings.CdaSettings;
 
 public class DerivedModelsCollectionServer extends DerivedModelsCollection{
 	
+    private ICDAManager cdaManager;
 
-
+    
     public DerivedModelsCollectionServer(String sessionId, Domain domain,
             LogicalModel model) {
         super(sessionId, domain, model);
     }
 
-	public void init() throws ModelException{
+	public DerivedModelsCollectionServer(String sessionId, Domain domain, LogicalModel model, ICDAManager cdaManager2) {
+	    super(sessionId, domain, model);
+	    this.cdaManager = cdaManager2;
+    }
+
+    public void init() throws ModelException{
         
         
         //init all the stuff
@@ -80,7 +87,6 @@ public class DerivedModelsCollectionServer extends DerivedModelsCollection{
             
 
             String solution = "";
-            String path = ".";
             CdaDataFactory f = new CdaDataFactory();        
             String baseUrlField = null;
             f.setBaseUrlField(baseUrlField);
@@ -89,11 +95,11 @@ public class DerivedModelsCollectionServer extends DerivedModelsCollection{
             f.setQuery(name, queryString);          
             //TODO Plugin URL detection
             String baseUrl = "http://localhost:8080/saiku-adhoc-webapp/rest/saiku-adhoc";
-
+            
             
             f.setBaseUrl(baseUrl);
             f.setSolution(solution);
-            f.setPath(path);
+            f.setPath(this.cdaManager.getPath());
             String file =  this.sessionId + ".cda";
             f.setFile(file);        
             String username = "admin";

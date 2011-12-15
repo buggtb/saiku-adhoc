@@ -23,12 +23,23 @@ package org.saiku.adhoc.server.model.service.cda;
 import org.saiku.adhoc.exceptions.CdaException;
 import org.saiku.adhoc.exceptions.QueryException;
 import org.saiku.adhoc.model.master.SaikuMasterModel;
+import org.saiku.adhoc.server.datasource.ICDAManager;
+import org.saiku.adhoc.server.datasource.SaikuCDA;
 import org.saiku.adhoc.service.cda.CdaQueryService;
 
 public class CdaQueryServiceServer extends CdaQueryService {
 	
-	private static final String path = "./";
+    private ICDAManager cdaManager;
 
+    public void setCDAManager(ICDAManager manager){
+        this.cdaManager = manager;
+        
+    }
+
+    public ICDAManager getCDAManager(){
+        return cdaManager;
+    }
+    
 	/**
 	 * Execute the query
 	 * 
@@ -47,7 +58,7 @@ public class CdaQueryServiceServer extends CdaQueryService {
 		//Save the cda first
 		try {
 			model.deriveModels();
-			repository.writeLocalFile(path, action, model.getCdaSettings().asXML().getBytes("UTF-8"));
+			cdaManager.addDatasource(new SaikuCDA(action, model.getCdaSettings().asXML().getBytes("UTF-8")));
 		} catch (Exception e) {
 			throw new QueryException(e.getMessage());
 		}
