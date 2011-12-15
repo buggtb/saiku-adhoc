@@ -34,6 +34,7 @@ import org.pentaho.reporting.engine.classic.extensions.datasources.cda.CdaDataFa
 import org.pentaho.reporting.engine.classic.wizard.model.DefaultWizardSpecification;
 import org.saiku.adhoc.exceptions.ModelException;
 import org.saiku.adhoc.model.master.DerivedModelsCollection;
+import org.saiku.adhoc.model.master.SaikuElementFormat;
 import org.saiku.adhoc.server.datasource.ICDAManager;
 
 import pt.webdetails.cda.connections.Connection;
@@ -69,6 +70,9 @@ public class DerivedModelsCollectionServer extends DerivedModelsCollection{
         //this.filterValues = new HashMap<String,ArrayList<String>>();  
         this.paramDef = new DefaultParameterDefinition();
 
+        this.rptIdToSaikuElement = new HashMap<String, Object>();
+        this.rptIdToElementFormat = new HashMap<String,SaikuElementFormat>(); 
+        
         try{
             //init cda
             this.cda = new CdaSettings("cda" + sessionId, null);

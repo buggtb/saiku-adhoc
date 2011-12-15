@@ -66,9 +66,9 @@ public class DerivedModelsCollection {
 	protected QueryXmlHelper xmlHelper; 
 	protected DataFactory cdaDataFactory;
 	
-	private Map<String,Object> rptIdToSaikuElement;
+	protected Map<String,Object> rptIdToSaikuElement;
 	
-	private Map<String,SaikuElementFormat> rptIdToElementFormat;
+	protected Map<String,SaikuElementFormat> rptIdToElementFormat;
 
 	public DerivedModelsCollection(String sessionId, Domain domain,
 			LogicalModel model) throws ModelException {

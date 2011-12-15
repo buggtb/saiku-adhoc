@@ -545,32 +545,6 @@ public class QueryResource extends PentahoBase {
 	
 	@POST
 	@Consumes({ "application/json" })
-	@Path("/{queryname}/COLUMNS/CATEGORY/{category}/COLUMN/{column}/POSITION/{position}/SORT/{order}")
-	public Status setSort(
-			@PathParam("queryname") String sessionId,
-			@PathParam("category") String category,
-			@PathParam("column") String column,
-			@PathParam("position") Integer position,
-			@PathParam("order") String order) {
-
-		if (log.isDebugEnabled()) {
-			log.debug("REST:POST " + sessionId + " sort position=" + position
-					+ " category=" + category + " column=" + column);
-		}
-
-		try {
-			editorService.setColumnSort(sessionId, category, column, position, order);
-			return Status.OK;
-		} catch (Exception e) {
-			e.printStackTrace();
-
-			return Status.INTERNAL_SERVER_ERROR;
-		}
-
-	}
-
-	@POST
-	@Consumes({ "application/json" })
 	@Path("/{queryname}/GROUP/CATEGORY/{category}/COLUMN/{column}/POSITION/{position}/SORT/{order}")
 	public Status setGroupSort(
 			@PathParam("queryname") String sessionId,
