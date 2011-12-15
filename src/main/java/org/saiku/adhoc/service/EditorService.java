@@ -56,11 +56,11 @@ import org.saiku.adhoc.service.repository.IMetadataService;
  *
  */
 public class EditorService {
+	
+	protected Log log = LogFactory.getLog(EditorService.class);
 
-	private Log log = LogFactory.getLog(EditorService.class);
-
-	private WorkspaceSessionHolder sessionHolder;
-	private IMetadataService metadataService;
+	protected WorkspaceSessionHolder sessionHolder;
+	protected IMetadataService metadataService;
 
 	public void setSessionHolder(WorkspaceSessionHolder sessionHolder) {
 		this.sessionHolder = sessionHolder;
@@ -73,7 +73,6 @@ public class EditorService {
 		SaikuMasterModel masterModel = null;
 
 		if(modelInfo.getJson()==null){
-
 			String domainId = URLDecoder.decode(modelInfo.getDomainId(), "UTF-8");
 			Domain domain = metadataService.getDomain(domainId);
 			LogicalModel model = metadataService.getLogicalModel(domainId,
@@ -95,13 +94,12 @@ public class EditorService {
 			masterModel.deriveModels();
 		}
 
-
-
 		sessionHolder.initSession(masterModel, sessionId);
 
 		sessionHolder.getModel(sessionId).setClientModelSelection(
 				URLEncoder.encode(masterModel.getDerivedModels().getDomain().getId(), "UTF-8")
 				+ "/" + masterModel.getDerivedModels().getLogicalModel().getId());
+
 
 		if (log.isDebugEnabled()) {
 			log.debug("SERVICE:EditorService " + sessionId + " createNewModel\n" + sessionHolder.logModel(sessionId));
@@ -141,6 +139,7 @@ public class EditorService {
 
 
 		List<SaikuColumn> columns = model.getColumns();
+
 		final LogicalModel logicalModel = model.getDerivedModels().getLogicalModel();
 		LogicalColumn logicalColumn = logicalModel.findLogicalColumn(columnId);
 
@@ -222,6 +221,7 @@ public class EditorService {
 
 	}
 
+
 	public void addCalulatedColumn(String sessionId, Integer position, SaikuColumn config) {
 		final SaikuMasterModel model = sessionHolder.getModel(sessionId);
 		List<SaikuColumn> columns = model.getColumns();	
@@ -253,6 +253,7 @@ public class EditorService {
 
 		final LogicalModel logicalModel = model.getDerivedModels().getLogicalModel();
 		LogicalColumn logicalColumn = logicalModel.findLogicalColumn(businessColumn);
+		
 
 
 		SaikuParameter parameter = new SaikuParameter(logicalColumn);
@@ -272,14 +273,14 @@ public class EditorService {
 			String businessColumn, int position) {
 
 		final SaikuMasterModel model = sessionHolder.getModel(sessionId);
-
+		
 		List<SaikuParameter> parameters = model
-		.getParameters();
-
+				.getParameters();
+		
 		String filterKey = category + "." + businessColumn;
 
 		parameters.remove(position);
-
+		
 		//model.getDerivedModels().getFilterValues().remove(filterKey);
 		model.getDerivedModels().getFilterQueries().remove(filterKey);
 
@@ -305,6 +306,7 @@ public class EditorService {
 					saikuParameter.getId().equals(businessColumn)){
 				saikuParameter.setParameterValues(values);
 			}
+
 		}
 
 	}
@@ -316,13 +318,11 @@ public class EditorService {
 		List<SaikuGroup> groups = model.getGroups();
 
 		final LogicalModel logicalModel = model.getDerivedModels()
-		.getLogicalModel();
+				.getLogicalModel();
 		LogicalColumn column = logicalModel.findLogicalColumn(columnId);
 
 		SaikuGroup group = null;
-
-		removeByUid(model,position.getUid());
-
+		
 		// see if group is allready in the selection
 		for (SaikuGroup saikuGroup : groups) {
 			if (saikuGroup.getUid().equals(position.getUid())) {
@@ -346,6 +346,7 @@ public class EditorService {
 			// Group name gets overwritten with the message format
 			//group.setGroupName(column.getName(locale));
 			
+
 			group.setGroupTotalsLabel("Total " + column.getName(locale));
 		}
 
@@ -381,6 +382,7 @@ public class EditorService {
 
 		final List<SaikuColumn> columns = sessionHolder.getModel(sessionId).getColumns();
 
+
 		for (SaikuColumn saikuColumn : columns) {
 			if(id.equals(saikuColumn.getUid())){
 				return saikuColumn;
@@ -390,10 +392,11 @@ public class EditorService {
 		return null;
 	}
 
+	
 	public void setColumnConfig(String sessionId, SaikuColumn config) {
 
 		final List<SaikuColumn> columns = sessionHolder.getModel(sessionId).getColumns();
-
+		
 		for (SaikuColumn saikuColumn : columns) {
 			if(config.getUid().equals(saikuColumn.getUid())){
 				columns.set(columns.indexOf(saikuColumn), config);
@@ -423,12 +426,16 @@ public class EditorService {
 			return new ElementFormat(
 					rptIdToElementFormat.get(id),saikuGroup.getGroupName());
 		
-		}else if(id.contains("rhd")){
+		
+		}
+		
+		else if(id.contains("rhd")){
 			final List<SaikuMessage> msgs = model.getReportHeaderMessages();			
 			for (SaikuMessage msg : msgs) {
 				if(id.equals(msg.getUid())){
 					return new ElementFormat(
 							rptIdToElementFormat.get(id),msg.getValue());
+
 				}
 			}	
 		}else if(id.contains("rft")){
@@ -444,7 +451,9 @@ public class EditorService {
 			for (SaikuMessage msg : msgs) {
 				if(id.equals(msg.getUid())){
 					return new ElementFormat(
+
 							rptIdToElementFormat.get(id),msg.getValue());
+
 				}
 			}		
 		}else if(id.contains("pft")){
@@ -456,6 +465,7 @@ public class EditorService {
 				}
 			}				
 		}
+
 
 
 		return null;
@@ -470,7 +480,9 @@ public class EditorService {
 			saikuColumn.setElementFormat(format.getFormat());
 			saikuColumn.setName(format.getValue());
 
-		}else if(id.contains("dth")){
+				}
+					
+		else if(id.contains("dth")){
 			final SaikuColumn saikuColumn = (SaikuColumn) model.getDerivedModels().getRptIdToSaikuElement().get(id);
 			saikuColumn.setColumnHeaderFormat(format.getFormat());
 			saikuColumn.setName(format.getValue());
@@ -480,7 +492,9 @@ public class EditorService {
 			saikuGroup.setGroupsHeaderFormat(format.getFormat());
 			saikuGroup.setGroupName(format.getValue());
 
-		}else if(id.contains("rhd")){
+				}	
+					
+		else if(id.contains("rhd")){
 			final List<SaikuMessage> msgs = model.getReportHeaderMessages();			
 			for (SaikuMessage msg : msgs) {
 				if(id.equals(msg.getUid())){
@@ -536,7 +550,6 @@ public class EditorService {
 	public void setMetadataService(IMetadataService metadataService) {
 		this.metadataService = metadataService;
 	}
-
 	public String getModelJson(String sessionId) throws JsonGenerationException, JsonMappingException, IOException {
 
 		String value = null;
@@ -546,7 +559,6 @@ public class EditorService {
 		value = mapper.writeValueAsString(model);
 		log.debug(value);
 		return value;
-
 	}
 
 	public void setRowlimit(String sessionId, String rowlimit) {

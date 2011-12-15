@@ -152,7 +152,7 @@ public class TransModelToCda {
 		return cda;
 	}
 
-	private Collection<ColumnDefinition> getCdaColumns(SaikuMasterModel smm) {
+	protected Collection<ColumnDefinition> getCdaColumns(SaikuMasterModel smm) {
 
 		// TODO: This should work without using the mql columns
 		// should be created directly from the MasterModel
@@ -184,6 +184,9 @@ public class TransModelToCda {
 				cdaColumns.add(columnDef);
 			}
 		}
+		
+		//add the calculated columns
+		
 
 		return cdaColumns;
 	}

@@ -126,9 +126,13 @@ public class PentahoRepositoryResource {
 			@PathParam("dir") String dir,
 			@PathParam("extensions") String fileExtensions
 	){
+<<<<<<< .merge_file_CGPD2n
 		final Document browse = repository.browse(dir, fileExtensions);
 		return new FileTree(browse.asXML());
 
+=======
+		return repository.browse(dir, fileExtensions);
+>>>>>>> .merge_file_vjh3Wx
 	}
 */
 

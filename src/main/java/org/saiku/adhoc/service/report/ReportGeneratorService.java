@@ -77,11 +77,11 @@ import org.saiku.adhoc.utils.ParamUtils;
 
 public class ReportGeneratorService {
 
-	private WorkspaceSessionHolder sessionHolder;
+   	protected WorkspaceSessionHolder sessionHolder;
 
-	private IRepositoryHelper repository;
+	protected IRepositoryHelper repository;
 
-	private static final Log log = LogFactory
+	protected static final Log log = LogFactory
 	.getLog(ReportGeneratorService.class);
 
 	public void setSessionHolder(WorkspaceSessionHolder sessionHolder) {
@@ -102,6 +102,7 @@ public class ReportGeneratorService {
 	 * @return
 	 * @throws Exception 
 	 * @throws IOException
+	 * @throws ResourceException
 	 */
 	public void renderReportHtml(String sessionId, String templateName, HtmlReport report, Integer acceptedPage) throws Exception {
 
@@ -162,79 +163,81 @@ public class ReportGeneratorService {
 	 * @throws ReportProcessingException 
 	 * @throws ModelException 
 	 */
-	private MasterReport processReport(SaikuMasterModel model,
-			MasterReport output) throws ReportException, ReportProcessingException, ModelException {
+	protected MasterReport processReport(SaikuMasterModel model,
+	        MasterReport output) throws ReportException, ReportProcessingException, ModelException {
 
 
-		CachingDataFactory dataFactory = null;
+	        CachingDataFactory dataFactory = null;
 
-		try {
+	        try {
 
-			model.deriveModels();
+	        model.deriveModels();
 
-			final MasterReport reportTemplate = model.getDerivedModels().getReportTemplate();
+	        final MasterReport reportTemplate = model.getDerivedModels().getReportTemplate();
 
-			final WizardSpecification wizardSpecification = model
-			.getWizardSpecification();
+	        final WizardSpecification wizardSpecification = model
+	        .getWizardSpecification();
 
-			reportTemplate.setDataFactory(model.getDerivedModels()
-					.getCdaDataFactory());
-			reportTemplate.setQuery(model.getDerivedModels().getSessionId());
+	        reportTemplate.setDataFactory(model.getDerivedModels()
+	        .getCdaDataFactory());
+	        reportTemplate.setQuery(model.getDerivedModels().getSessionId());
 
-			reportTemplate.setAttribute(AttributeNames.Wizard.NAMESPACE,
-					"wizard-spec", wizardSpecification);
-
-
-			final ProcessingContext processingContext = new DefaultProcessingContext();
-			final DataSchemaDefinition definition = reportTemplate
-			.getDataSchemaDefinition();
-
-			final ReportParameterValues parameterValues = StateUtilities.computeParameterValueSet(reportTemplate,
-					getReportParameterValues(model));
-
-			final ParameterDefinitionEntry[] parameterDefinitions = reportTemplate.getParameterDefinition()
-			.getParameterDefinitions();
-
-			final DefaultFlowController flowController = new DefaultFlowController(
-					processingContext, definition,
-					parameterValues,
-					parameterDefinitions, false);
-
-			ensureSaikuPreProcessorIsAdded(reportTemplate, model);
-			ensureHasOverrideWizardFormatting(reportTemplate, flowController);
-
-			dataFactory = new CachingDataFactory(
-					reportTemplate.getDataFactory(), false);
-			dataFactory.initialize(processingContext.getConfiguration(),
-					processingContext.getResourceManager(),
-					processingContext.getContentBase(),
-					processingContext.getResourceBundleFactory());
-
-			final DefaultFlowController postQueryFlowController = flowController
-			.performQuery(dataFactory, reportTemplate.getQuery(),
-					reportTemplate.getQueryLimit(), reportTemplate
-					.getQueryTimeout(), flowController
-					.getMasterRow().getResourceBundleFactory());
-
-			reportTemplate.setAttribute(AttributeNames.Wizard.NAMESPACE,
-					AttributeNames.Wizard.ENABLE, Boolean.TRUE);
+	        reportTemplate.setAttribute(AttributeNames.Wizard.NAMESPACE,
+	        "wizard-spec", wizardSpecification);
 
 
-			ReportPreProcessor processor = new SaikuAdhocPreProcessor();
-			((SaikuAdhocPreProcessor) processor).setSaikuMasterModel(model);
-			output = processor.performPreProcessing(
-					reportTemplate, postQueryFlowController);
-			output.setAttribute(AttributeNames.Wizard.NAMESPACE,
-					AttributeNames.Wizard.ENABLE, Boolean.FALSE);
-			
-			output.setAttribute(AttributeNames.Wizard.NAMESPACE,
-					AttributeNames.Wizard.ENABLE, Boolean.FALSE);	
+	        final ProcessingContext processingContext = new DefaultProcessingContext();
+	        final DataSchemaDefinition definition = reportTemplate
+	        .getDataSchemaDefinition();
 
-		} finally {
-			dataFactory.close();
-		}
-		return output;
-	}
+	        final ReportParameterValues parameterValues = StateUtilities.computeParameterValueSet(reportTemplate,
+	        getReportParameterValues(model));
+
+	        final ParameterDefinitionEntry[] parameterDefinitions = reportTemplate.getParameterDefinition()
+	        .getParameterDefinitions();
+
+	        final DefaultFlowController flowController = new DefaultFlowController(
+	        processingContext, definition,
+	        parameterValues,
+	        parameterDefinitions, false);
+
+	        ensureSaikuPreProcessorIsAdded(reportTemplate, model);
+	        ensureHasOverrideWizardFormatting(reportTemplate, flowController);
+
+	        dataFactory = new CachingDataFactory(
+	        reportTemplate.getDataFactory(), false);
+	        dataFactory.initialize(processingContext.getConfiguration(),
+	        processingContext.getResourceManager(),
+	        processingContext.getContentBase(),
+	        processingContext.getResourceBundleFactory());
+
+	        final DefaultFlowController postQueryFlowController = flowController
+	        .performQuery(dataFactory, reportTemplate.getQuery(),
+	        reportTemplate.getQueryLimit(), reportTemplate
+	        .getQueryTimeout(), flowController
+	        .getMasterRow().getResourceBundleFactory());
+
+	        reportTemplate.setAttribute(AttributeNames.Wizard.NAMESPACE,
+	        AttributeNames.Wizard.ENABLE, Boolean.TRUE);
+
+
+	        ReportPreProcessor processor = new SaikuAdhocPreProcessor();
+	        ((SaikuAdhocPreProcessor) processor).setSaikuMasterModel(model);
+	        output = processor.performPreProcessing(
+	        reportTemplate, postQueryFlowController);
+	        output.setAttribute(AttributeNames.Wizard.NAMESPACE,
+	        AttributeNames.Wizard.ENABLE, Boolean.FALSE);
+
+	        output.setAttribute(AttributeNames.Wizard.NAMESPACE,
+	        AttributeNames.Wizard.ENABLE, Boolean.FALSE);
+
+	        } finally {
+	        dataFactory.close();
+	        }
+	        return output;
+	        }
+
+
 
 	/**
 	 * @param model
@@ -255,23 +258,24 @@ public class ReportGeneratorService {
 		return prptContent;
 	}
 
-	private ReportParameterValues getReportParameterValues(
-			SaikuMasterModel model) {
+	protected ReportParameterValues getReportParameterValues(
+	        SaikuMasterModel model) {
 
-		ReportParameterValues vals = new ReportParameterValues();
+	        ReportParameterValues vals = new ReportParameterValues();
 
-		Map<String, Object> reportParameters = ParamUtils.getReportParameters("", model);
+	        Map<String, Object> reportParameters = ParamUtils.getReportParameters("", model);
 
-		if (null != model) {
-			Collection<String> keyset = reportParameters.keySet();
-			for (Iterator<String> iterator = keyset.iterator(); iterator
-			.hasNext();) {
-				String key = (String) iterator.next();
-				vals.put(key, reportParameters.get(key));
-			}
-		}
-		return vals;
-	}
+	        if (null != model) {
+	        Collection<String> keyset = reportParameters.keySet();
+	        for (Iterator<String> iterator = keyset.iterator(); iterator
+	        .hasNext();) {
+	        String key = (String) iterator.next();
+	        vals.put(key, reportParameters.get(key));
+	        }
+	        }
+	        return vals;
+	        }
+
 
 //	private Map<String, Object> getReportParameters(SaikuMasterModel model) throws ParseException {
 //
@@ -317,27 +321,27 @@ public class ReportGeneratorService {
 	 * @throws Exception 
 	 */
 	private void generateHtmlReport(MasterReport output, OutputStream stream,
-			Map<String, Object> reportParameters, HtmlReport report, Integer acceptedPage) throws Exception{
+	        Map<String, Object> reportParameters, HtmlReport report, Integer acceptedPage) throws Exception{
 
-		final SimpleReportingComponent reportComponent = new SimpleReportingComponent();
-		reportComponent.setReport(output);
-		reportComponent.setPaginateOutput(true);      
-		reportComponent.setInputs(reportParameters);
-		reportComponent.setDefaultOutputTarget(HtmlTableModule.TABLE_HTML_PAGE_EXPORT_TYPE);
-		reportComponent.setOutputTarget(HtmlTableModule.TABLE_HTML_PAGE_EXPORT_TYPE);
-		reportComponent.setDashboardMode(true);  
-		reportComponent.setOutputStream(stream);
-		reportComponent.setAcceptedPage(acceptedPage);  
-		
-		//reportComponent.setUseContentRepository(false);
-		
-		reportComponent.validate();  
-		reportComponent.execute();
+	        final SimpleReportingComponent reportComponent = new SimpleReportingComponent();
+	        reportComponent.setReport(output);
+	        reportComponent.setPaginateOutput(true);
+	        reportComponent.setInputs(reportParameters);
+	        reportComponent.setDefaultOutputTarget(HtmlTableModule.TABLE_HTML_PAGE_EXPORT_TYPE);
+	        reportComponent.setOutputTarget(HtmlTableModule.TABLE_HTML_PAGE_EXPORT_TYPE);
+	        reportComponent.setDashboardMode(true);
+	        reportComponent.setOutputStream(stream);
+	        reportComponent.setAcceptedPage(acceptedPage);
 
-		report.setCurrentPage(reportComponent.getAcceptedPage());
-		report.setPageCount(reportComponent.getPageCount());
+	        //reportComponent.setUseContentRepository(false);
 
-	}
+	        reportComponent.validate();
+	        reportComponent.execute();
+
+	        report.setCurrentPage(reportComponent.getAcceptedPage());
+	        report.setPageCount(reportComponent.getPageCount());
+
+	        }
 	
 	/**
 	 * Generate the report
@@ -364,75 +368,77 @@ public class ReportGeneratorService {
 		reportComponent.execute();
 
 	}
+	
+	protected void ensureSaikuPreProcessorIsRemoved(final AbstractReportDefinition element) {
+
+	    final ReportPreProcessor[] oldProcessors = element.getPreProcessors();
+
+	    ArrayList<ReportPreProcessor> newProcessors = new ArrayList<ReportPreProcessor>();
+
+	    for (int i = 0; i < oldProcessors.length; i++)
+	    {
+	    ReportPreProcessor processor = oldProcessors[i];
+	    if (!(processor instanceof SaikuAdhocPreProcessor || processor instanceof WizardProcessor))
+	    {
+	    newProcessors.add(processor);
+	    }
+	    }
+
+	    final ReportPreProcessor[] array = newProcessors.toArray(new ReportPreProcessor[newProcessors.size()]);
+	    element.setAttribute(AttributeNames.Internal.NAMESPACE, AttributeNames.Internal.PREPROCESSORS, array);
+
+	    }
 
 
-	private void ensureSaikuPreProcessorIsRemoved(final AbstractReportDefinition element) {
-
-		final ReportPreProcessor[] oldProcessors = element.getPreProcessors();
-
-		ArrayList<ReportPreProcessor> newProcessors = new ArrayList<ReportPreProcessor>();
-
-		for (int i = 0; i < oldProcessors.length; i++)
-		{
-			ReportPreProcessor processor = oldProcessors[i];
-			if (!(processor instanceof SaikuAdhocPreProcessor  || processor instanceof WizardProcessor))
-			{
-				newProcessors.add(processor);
-			}
-		}
-
-		final ReportPreProcessor[] array = newProcessors.toArray(new ReportPreProcessor[newProcessors.size()]);
-		element.setAttribute(AttributeNames.Internal.NAMESPACE, AttributeNames.Internal.PREPROCESSORS, array);
-
-	}
 
 
-	private static void ensureSaikuPreProcessorIsAdded(final AbstractReportDefinition element,
-			SaikuMasterModel model)
-	{
-		final ReportPreProcessor[] processors = element.getPreProcessors();
-		boolean hasSaikuProcessor = false;
-		for (int i = 0; i < processors.length; i++)
-		{
-			final ReportPreProcessor processor = processors[i];
-			if (processor instanceof SaikuAdhocPreProcessor)
-			{
-				hasSaikuProcessor = true;
-				//Set the model on the processor
-				((SaikuAdhocPreProcessor) processor).setSaikuMasterModel(model);
+	protected static void ensureSaikuPreProcessorIsAdded(final AbstractReportDefinition element,
+	        SaikuMasterModel model)
+	        {
+	        final ReportPreProcessor[] processors = element.getPreProcessors();
+	        boolean hasSaikuProcessor = false;
+	        for (int i = 0; i < processors.length; i++)
+	        {
+	        final ReportPreProcessor processor = processors[i];
+	        if (processor instanceof SaikuAdhocPreProcessor)
+	        {
+	        hasSaikuProcessor = true;
+	        //Set the model on the processor
+	        ((SaikuAdhocPreProcessor) processor).setSaikuMasterModel(model);
 
-			}
-		}
-		if (!hasSaikuProcessor)
-		{
-			//Add a new processor with the current model
-			final SaikuAdhocPreProcessor processor = new SaikuAdhocPreProcessor();
-			processor.setSaikuMasterModel(model);
-			element.addPreProcessor(processor);
-		}
-	}
+	        }
+	        }
+	        if (!hasSaikuProcessor)
+	        {
+	        //Add a new processor with the current model
+	        final SaikuAdhocPreProcessor processor = new SaikuAdhocPreProcessor();
+	        processor.setSaikuMasterModel(model);
+	        element.addPreProcessor(processor);
+	        }
+	        }
 
-	private static void ensureHasOverrideWizardFormatting(
-			AbstractReportDefinition reportTemplate, 
-			DefaultFlowController flowController) {
+	protected static void ensureHasOverrideWizardFormatting(
+	        AbstractReportDefinition reportTemplate,
+	        DefaultFlowController flowController) {
 
-		final StructureFunction[] structureFunctions = reportTemplate.getStructureFunctions();
+	        final StructureFunction[] structureFunctions = reportTemplate.getStructureFunctions();
 
-		boolean hasOverrideWizardFormatting = false;
+	        boolean hasOverrideWizardFormatting = false;
 
-		for (int i = 0; i < structureFunctions.length; i++) {
-			final StructureFunction structureFunction = structureFunctions[i];
-			if(structureFunction instanceof WizardOverrideFormattingFunction){
-				hasOverrideWizardFormatting = false;
-				break;
-			}
-		}
-		if(!hasOverrideWizardFormatting){
-			reportTemplate.addStructureFunction(new WizardOverrideFormattingFunction());
-		}
+	        for (int i = 0; i < structureFunctions.length; i++) {
+	        final StructureFunction structureFunction = structureFunctions[i];
+	        if(structureFunction instanceof WizardOverrideFormattingFunction){
+	        hasOverrideWizardFormatting = false;
+	        break;
+	        }
+	        }
+	        if(!hasOverrideWizardFormatting){
+	        reportTemplate.addStructureFunction(new WizardOverrideFormattingFunction());
+	        }
 
 
-	}
+	        }
+
 
 	public void savePrpt(String sessionId, String path, String file) throws ReportException, BundleWriterException, ContentIOException, IOException, ReportProcessingException, ModelException {
 
@@ -470,5 +476,6 @@ public class ReportGeneratorService {
 
 
 	}
+	 
 
 }

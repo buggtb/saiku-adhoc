@@ -100,6 +100,7 @@ public class SaikuColumn {
 		this.columnHeaderFormat = new SaikuElementFormat();		
 		this.fieldType = logicalColumn.getDataType().getName();		
 		this.forGroupOnly = false;
+
 		this.sort = "NONE";
 		
 	}

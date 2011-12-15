@@ -25,6 +25,7 @@ import org.saiku.adhoc.model.metadata.ICategory;
 
 
 
+
 /**
  * Concrete, lightweight, serializable implementation of an {@see ICategory} object
  * @author jamesdixon

@@ -145,5 +145,5 @@ public class ExportResource {
 		return exportService.exportCsv(queryName);
 
 	}
-	
+
 }

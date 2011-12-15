@@ -90,6 +90,12 @@ public class QueryResource extends PentahoBase {
 			log.debug("REST:GET " + queryName + " saveQuery");
 		}
 
+
+		
+		if (log.isDebugEnabled()) {
+			log.debug("REST:GET " + queryName + " saveQuery");
+		}
+
 		try {
 			String json = editorService.getModelJson(queryName);
 
@@ -114,11 +120,13 @@ public class QueryResource extends PentahoBase {
 	@Path("/{queryname}/result")
 	public String executeQuery(@PathParam("queryname") String sessionId) throws QueryException, CdaException {
 
+
 		if (log.isDebugEnabled()) {
 			log.debug("REST:GET " + sessionId + " executeQuery");
 		}
 
 		return queryService.runQuery(sessionId, sessionId);
+
 
 	}
 
@@ -243,10 +251,7 @@ public class QueryResource extends PentahoBase {
 	public HtmlReport generate(
 			@PathParam("queryname") String sessionId,
 			@PathParam("template") String template,
-			@PathParam("page") String page
-	) {
-
-		//TODO: acceptedPage mit übergeben
+			@PathParam("page") String page){
 
 		if (log.isDebugEnabled()) {
 			log.debug("REST:GET " + sessionId + " generate");
@@ -267,7 +272,6 @@ public class QueryResource extends PentahoBase {
 
 		return null;
 	}
-
 
 	@GET
 	@Produces({ "application/json" })
@@ -317,6 +321,7 @@ public class QueryResource extends PentahoBase {
 			@PathParam("column") String businessColumn,
 			@PathParam("position") Integer position) {
 
+
 		if (log.isDebugEnabled()) {
 			log.debug("REST:DELETE " + sessionId + " removeColumn position=" + position
 					+ " category=" + category + " column=" + businessColumn);
@@ -339,6 +344,7 @@ public class QueryResource extends PentahoBase {
 			@PathParam("queryname") String sessionId,
 			@PathParam("category") String category,
 			@PathParam("column") String businessColumn) {
+
 
 		if (log.isDebugEnabled()) {
 			log.debug("REST:POST " + sessionId + " addFilter position=" + position
@@ -363,6 +369,7 @@ public class QueryResource extends PentahoBase {
 			@PathParam("category") String category,
 			@PathParam("column") String businessColumn,
 			@PathParam("position") Integer position) {
+
 
 		if (log.isDebugEnabled()) {
 			log.debug("REST:DELETE " + sessionId + " removeFilter position=" + position
@@ -389,6 +396,7 @@ public class QueryResource extends PentahoBase {
 			@PathParam("category") String category,
 			@PathParam("column") String businessColumn) {
 
+
 		if (log.isDebugEnabled()) {
 			log.debug("REST:POST " + sessionId + " setFilterValues " + 
 					"category=" + category + " column=" + businessColumn);
@@ -414,6 +422,7 @@ public class QueryResource extends PentahoBase {
 			@PathParam("column") String businessColumn,
 			@PathParam("position") Integer pos) {
 
+
 		if (log.isDebugEnabled()) {
 			log.debug("REST:POST " + sessionId + " addGroup uid=" + position.getUid() + " position=" + position.getPosition() 
 					+ " category=" + category + " column=" + businessColumn);
@@ -436,6 +445,7 @@ public class QueryResource extends PentahoBase {
 			@PathParam("category") String category,
 			@PathParam("column") String businessColumn,
 			@PathParam("position") Integer position) {
+
 
 		if (log.isDebugEnabled()) {
 			log.debug("REST:DELETE " + sessionId + " removeGroup position=" + position
@@ -486,7 +496,7 @@ public class QueryResource extends PentahoBase {
 			@PathParam("column") String column,
 			@PathParam("position") Integer position) {
 
-		if (log.isDebugEnabled()) {
+	    if (log.isDebugEnabled()) {
 			log.debug("REST:POST " + sessionId + " setColumnConfig position=" + position
 					+ " category=" + category + " column=" + column);
 		}
@@ -511,6 +521,32 @@ public class QueryResource extends PentahoBase {
 	@Consumes({ "application/json" })
 	@Path("/{queryname}/COLUMNS/CATEGORY/{category}/COLUMN/{column}/POSITION/{position}/SORT/{order}")
 	public Status setColumnSort(
+	@PathParam("queryname") String sessionId,
+	@PathParam("category") String category,
+	@PathParam("column") String column,
+	@PathParam("position") Integer position,
+	@PathParam("order") String order) {
+
+	if (log.isDebugEnabled()) {
+	log.debug("REST:POST " + sessionId + " sort position=" + position
+	+ " category=" + category + " column=" + column);
+	}
+
+	try {
+	editorService.setColumnSort(sessionId, category, column, position, order);
+	return Status.OK;
+	} catch (Exception e) {
+	e.printStackTrace();
+
+	return Status.INTERNAL_SERVER_ERROR;
+	}
+
+	}
+	
+	@POST
+	@Consumes({ "application/json" })
+	@Path("/{queryname}/COLUMNS/CATEGORY/{category}/COLUMN/{column}/POSITION/{position}/SORT/{order}")
+	public Status setSort(
 			@PathParam("queryname") String sessionId,
 			@PathParam("category") String category,
 			@PathParam("column") String column,
@@ -558,6 +594,7 @@ public class QueryResource extends PentahoBase {
 		}
 
 	}
+	
 
 	@Override
 	public Log getLogger() {
@@ -577,8 +614,6 @@ public class QueryResource extends PentahoBase {
 		this.reportGeneratorService = reportGeneratorService;
 	}
 
-	//Edit Elements
-
 	@GET
 	@Produces({ "application/json" })
 	@Path("/{queryname}/FORMAT/ELEMENT/{id}")
@@ -590,7 +625,6 @@ public class QueryResource extends PentahoBase {
 
 			//return editorService.getColumnConfig(sessionId,id);
 			return editorService.getElementFormat(sessionId, id);
-
 
 		} catch (Exception e) {
 			log.error("Cannot execute Query", e);
@@ -613,6 +647,7 @@ public class QueryResource extends PentahoBase {
 			return Status.INTERNAL_SERVER_ERROR;
 		}
 	}
+	
 
 	@POST
 	@Path("/{queryname}/EXPORT/PRPT")

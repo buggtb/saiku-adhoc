@@ -60,9 +60,10 @@ public class PentahoMetadataService extends PentahoBase implements IMetadataServ
 
 	private Log logger = LogFactory.getLog(PentahoMetadataService.class);
 
-	private final IMetadataDomainRepository repo;
-	
-	private IRepositoryHelper repositoryHelper;
+	protected final IMetadataDomainRepository repo;
+
+	protected IRepositoryHelper repositoryHelper;
+
 
 	public PentahoMetadataService() {
 		setLoggingLevel(ILogger.ERROR);
@@ -231,11 +232,11 @@ public class PentahoMetadataService extends PentahoBase implements IMetadataServ
 		IMetadataDomainRepository mdr = PentahoSystem
 				.get(IMetadataDomainRepository.class,
 						PentahoSessionHolder.getSession());
-
-		if (mdr instanceof ILogger) {
-			((ILogger) mdr).setLoggingLevel(getLoggingLevel());
-		}
-		return mdr;
+	     
+	    if (mdr instanceof ILogger) {
+            ((ILogger) mdr).setLoggingLevel(getLoggingLevel());
+        }
+	    return mdr;
 	}
 
 	@Override
