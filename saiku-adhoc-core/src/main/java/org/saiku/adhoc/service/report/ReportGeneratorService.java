@@ -37,6 +37,7 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.pentaho.platform.api.util.ITempFileDeleter;
 import org.pentaho.platform.engine.core.solution.ActionInfo;
 import org.pentaho.reporting.engine.classic.core.AbstractReportDefinition;
 import org.pentaho.reporting.engine.classic.core.AttributeNames;

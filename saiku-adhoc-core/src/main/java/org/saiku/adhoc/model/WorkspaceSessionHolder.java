@@ -19,10 +19,16 @@
  */
 package org.saiku.adhoc.model;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.naming.OperationNotSupportedException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+
+import org.saiku.adhoc.exceptions.ModelException;
 import org.saiku.adhoc.exceptions.QueryException;
 import org.saiku.adhoc.model.master.ReportTemplate;
 import org.saiku.adhoc.model.master.SaikuColumn;
@@ -31,7 +37,6 @@ import org.saiku.adhoc.model.master.SaikuMasterModel;
 import org.saiku.adhoc.model.master.SaikuParameter;
 import org.saiku.adhoc.service.SaikuProperties;
 import org.saiku.adhoc.service.repository.IRepositoryHelper;
-
 
 /**
  * This object is a singleton and holds all models. Models are stored under
@@ -105,7 +110,7 @@ public class WorkspaceSessionHolder {
 		return string.toString();
 	}
 
-	public void materializeModel(String sessionId) throws QueryException {
+	public void materializeModel(String sessionId) {
 		
 		SaikuMasterModel model = this.getModel(sessionId);
 
@@ -114,10 +119,20 @@ public class WorkspaceSessionHolder {
 		//Save the cda first
 		try {
 			model.deriveModels();
+			
 			repository.writeFile(solution, path, action, model.getCdaSettings().asXML());
-		} catch (Exception e) {
-			throw new QueryException(e.getMessage());
-		}
+		 } catch (ModelException e) {
+		         // TODO Auto-generated catch block
+		         e.printStackTrace();
+		     } catch (OperationNotSupportedException e) {
+		         e.printStackTrace();
+		     } catch (IOException e) {
+		         e.printStackTrace();
+		     } catch (TransformerFactoryConfigurationError e) {
+		         e.printStackTrace();
+		     } catch (TransformerException e) {
+		         e.printStackTrace();
+		     }
 
 	}
 }

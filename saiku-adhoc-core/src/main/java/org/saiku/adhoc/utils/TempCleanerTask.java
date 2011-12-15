@@ -24,6 +24,7 @@ import java.util.TimerTask;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.ISolutionFile;
 import org.pentaho.platform.api.repository.ISolutionRepository;
+import org.pentaho.platform.api.util.ITempFileDeleter;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 
@@ -32,6 +33,10 @@ public class TempCleanerTask extends TimerTask {
 private static final String path = "system/saiku-adhoc/temp";
 
 public void run() {
+
+
+
+ITempFileDeleter temp;
 
 // IPentahoSession userSession = PentahoSessionHolder.getSession();
 //

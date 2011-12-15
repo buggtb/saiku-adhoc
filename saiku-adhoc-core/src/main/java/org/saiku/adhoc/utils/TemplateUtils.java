@@ -204,6 +204,33 @@ prptFormat.setStyleProperty(
 TextStyleKeys.FONT,saikuFormat.getFontName());
 }
 
+if(saikuFormat.getFontBold()==null){
+final Boolean fontBold = (Boolean) prptFormat.getStyleProperty(
+TextStyleKeys.BOLD, null);
+saikuFormat.setFontBold(fontBold);
+}else{
+prptFormat.setStyleProperty(
+TextStyleKeys.BOLD,saikuFormat.getFontBold());
+}
+
+if(saikuFormat.getFontItalic()==null){
+final Boolean fontItalic = (Boolean) prptFormat.getStyleProperty(
+TextStyleKeys.ITALIC, null);
+saikuFormat.setFontBold(fontItalic);
+}else{
+prptFormat.setStyleProperty(
+TextStyleKeys.ITALIC,saikuFormat.getFontItalic());
+}
+
+if(saikuFormat.getFontUnderlined()==null){
+final Boolean fontUnderlined = (Boolean) prptFormat.getStyleProperty(
+TextStyleKeys.UNDERLINED, null);
+saikuFormat.setFontUnderlined(fontUnderlined);
+}else{
+prptFormat.setStyleProperty(
+TextStyleKeys.UNDERLINED,saikuFormat.getFontUnderlined());
+}
+
 if(saikuFormat.getHorizontalAlignment()==null){
 final ElementAlignment horz = (ElementAlignment) prptFormat.getStyleProperty(
 ElementStyleKeys.ALIGNMENT, null);

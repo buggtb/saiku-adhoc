@@ -124,7 +124,7 @@
 </dependency>
 		<dependency>
 			<groupId>org.saiku</groupId>
-			<artifactId>saiku-adhoc</artifactId>
+			<artifactId>saiku-adhoc-core</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<!-- Spring modules -->

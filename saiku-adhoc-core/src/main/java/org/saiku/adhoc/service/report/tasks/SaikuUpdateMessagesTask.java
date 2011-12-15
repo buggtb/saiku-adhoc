@@ -60,7 +60,7 @@ if(el.getElementTypeName().equals("message") ||
 el.getElementTypeName().equals("label")){
 final String htmlClass = "saiku " + uid;
 e.setAttribute(AttributeNames.Html.NAMESPACE, AttributeNames.Html.STYLE_CLASS, htmlClass);
-}
+
 
 SaikuMessage m = null;
 
@@ -96,8 +96,10 @@ TemplateUtils.mergeElementFormats(e.getStyle(), tempFormat);
 
 model.getDerivedModels().getRptIdToElementFormat().put(uid, tempFormat);
 
+}
 
 
 }
 
 }
+
